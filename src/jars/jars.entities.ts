@@ -1,14 +1,15 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Prop, Schema as SchemaN, SchemaFactory } from '@nestjs/mongoose';
+import { Document, Schema } from 'mongoose';
+import { Users } from 'src/users/users.entities';
 
-@Schema()
+@SchemaN()
 export class Jars extends Document {
-  @Prop({ unique: true, index: true })
+  @Prop()
   name: string;
-  @Prop({ unique: true, index: true })
+  @Prop()
   color: string;
-  @Prop({})
-  userid: string;
+  @Prop({ type: Schema.Types.ObjectId, ref: 'Users' })
+  userid: Users;
   @Prop({})
   percent: string;
   @Prop({})
