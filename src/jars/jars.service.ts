@@ -27,7 +27,7 @@ export class JarsService {
   async testCreateRecord() {
     const jar = await this.JarsModel.find({
       userid: '651cc49ffab1fc981378c5bd',
-    }});
+    });
 
     return jar;
   }
