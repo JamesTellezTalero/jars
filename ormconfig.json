@@ -1,0 +1,19 @@
+{
+	"type": "postgres",
+	"username": "root",
+	"host": "localhost",
+	"database": "jars",
+	"password": "root",
+	"port": "5432",
+	"synchronize": false,
+	"autoLoadEntities": true,
+	"entities": ["./src/database/entities/*{.ts,.js}"],
+	"subscribers": ["./src/database/subscribers/*{.ts,.js}"],
+	"migrationsTableName": "migrations",
+    "migrations": "./src/database/migrations/*{.ts,.js}",
+    "cli": {
+		"entitiesDir": "src/batabase/entities",
+		"migrationsDir": "src/batabase/migrations",
+		"subscribersDir": "src/batabase/subscribers"
+    }
+}

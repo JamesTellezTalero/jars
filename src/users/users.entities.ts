@@ -1,20 +1,35 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  Index,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
-@Schema({})
-export class Users extends Document {
-  @Prop({ unique: true, index: true })
+@Index('users_pkey', ['id'], { unique: true })
+@Entity('users', { schema: 'public' })
+export class Users {
+  @PrimaryGeneratedColumn({ type: 'integer', name: 'id' })
+  id: number;
+  @Column('character varying', { name: 'username', length: 150 })
   username: string;
-  @Prop({ unique: true, index: true })
+  @Column('character varying', { name: 'email', length: 150 })
   email: string;
-  @Prop({})
+  @Column('character varying', { name: 'password', length: 150 })
   password: string;
-  @Prop({})
+  @Column('character varying', { name: 'img', length: 150 })
   img: string;
-  @Prop({})
+  @Column({})
   darkmode: boolean;
-  @Prop({})
+  @CreateDateColumn({
+    name: 'createdat',
+  })
   createdAt: Date;
-}
 
-export const UsersSchema = SchemaFactory.createForClass(Users);
+  @UpdateDateColumn({
+    name: 'updatedat',
+    nullable: true,
+  })
+  updatedat: Date | null;
+}

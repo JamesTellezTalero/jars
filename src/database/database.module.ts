@@ -2,6 +2,7 @@ import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import dbConfig from './dbConfig';
 import { ConfigType } from '@nestjs/config';
+import { Users } from 'src/users/users.entities';
 
 @Global()
 @Module({
@@ -20,7 +21,7 @@ import { ConfigType } from '@nestjs/config';
           synchronize: false,
           autoLoadEntities: true,
           migrationsTableName: 'migrations',
-          entities: [],
+          entities: [Users],
           migrations: [],
           subscribers: [],
         };
