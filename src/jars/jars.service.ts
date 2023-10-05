@@ -1,15 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
-import { Jars } from './jars.entities';
-import { lookupService } from 'dns';
+// import { InjectModel } from '@nestjs/mongoose';
+// import { Model } from 'mongoose';
+// import { Jars } from './jars.entities';
 
 @Injectable()
 export class JarsService {
-  constructor(
-    @InjectModel('Jars')
-    private readonly JarsModel: Model<Jars>,
-  ) {}
+  // constructor(
+  //   @InjectModel('Jars')
+  //   private readonly JarsModel: Model<Jars>,
+  // ) {}
 
   // async testCreateRecord() {
   //   const jar = new this.JarsModel({
@@ -25,10 +24,10 @@ export class JarsService {
   // }
 
   async testCreateRecord() {
-    const jar = await this.JarsModel.find({
-      userid: '651cc49ffab1fc981378c5bd',
-    });
+    // const jar = await this.JarsModel.find({
+    //   userid: '651cc49ffab1fc981378c5bd',
+    // });
 
-    return jar;
+    return 'jar';
   }
 }
