@@ -7,6 +7,7 @@ import { MovementsModule } from './movements/movements.module';
 import { MovementTypesModule } from './movement-types/movement-types.module';
 import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
+import { TagsModule } from './tags/tags.module';
 import * as Joi from 'joi';
 import dbConfig from './database/dbConfig';
 
@@ -30,6 +31,7 @@ import dbConfig from './database/dbConfig';
     MovementsModule,
     MovementTypesModule,
     DatabaseModule,
+    TagsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

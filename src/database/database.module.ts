@@ -2,7 +2,11 @@ import { Global, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import dbConfig from './dbConfig';
 import { ConfigType } from '@nestjs/config';
-import { Users } from 'src/users/users.entities';
+import { Users } from './entities/Users';
+import { Jars } from './entities/Jars';
+import { Movements } from './entities/Movements';
+import { Movementtypes } from './entities/Movementtypes';
+import { Tags } from './entities/Tags';
 
 @Global()
 @Module({
@@ -21,7 +25,7 @@ import { Users } from 'src/users/users.entities';
           synchronize: false,
           autoLoadEntities: true,
           migrationsTableName: 'migrations',
-          entities: [Users],
+          entities: [Jars, Movements, Movementtypes, Tags, Users],
           migrations: [],
           subscribers: [],
         };
