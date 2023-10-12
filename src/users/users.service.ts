@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/database/entities/Users';
 import { Repository } from 'typeorm';
+import { UsersDto } from './users.dto';
 // import { Model } from 'mongoose';
 // import { Users } from './users.entities';
 // import { InjectModel } from '@nestjs/mongoose';
@@ -28,5 +29,17 @@ export class UsersService {
 
   async GetUserById(id: number) {
     return this.UsersRepo.findOne({ where: { id } });
+  }
+
+  async Create(users: UsersDto) {
+    const newUsers = new Users();
+    newUsers.darkmode = users.darkmode;
+    newUsers.username = users.username;
+    newUsers.email = users.email;
+    newUsers.password = users.password;
+    newUsers.image = users.image;
+    newUsers.createdat = new Date();
+    newUsers.updatedat = new Date();
+    return this.UsersRepo.save(newUsers);
   }
 }

@@ -18,8 +18,8 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-		"typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
-		"migrations:generate": "npx typeorm-model-generator -h localhost -d jars -u root -x 'root' -e postgres -o ./src/database"
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "migrations:generate": "npx typeorm-model-generator -h localhost -d jars -u root -x 'root' -e postgres -o ./src/database"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
@@ -28,6 +28,8 @@
     "@nestjs/mongoose": "^10.0.1",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.0",
+    "class-transformer": "^0.5.1",
+    "class-validator": "^0.14.0",
     "joi": "^17.11.0",
     "mongoose": "^7.5.3",
     "pg": "^8.11.3",
