@@ -23,8 +23,8 @@ export class JarsService {
     jar.color = 'string';
     jar.user = await this.UsersS.GetUserById(2);
     jar.percent = 'string';
-    jar.createdat = new Date();
-    jar.updatedat = new Date();
+    jar.createdAt = new Date();
+    jar.updatedAt = new Date();
 
     return this.JarsRepo.save(jar);
   }

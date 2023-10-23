@@ -25,13 +25,13 @@ export class MovementsService {
     movement.title = 'string';
     movement.desc = 'string';
     movement.amount = 222;
-    movement.senderjar = await this.JarsS.GetUserById(1);
-    movement.receiverjar = await this.JarsS.GetUserById(1);
-    movement.movementtype = await this.MovementsTypesS.GetUserById(1);
+    movement.senderJar = await this.JarsS.GetUserById(1);
+    movement.receiverJar = await this.JarsS.GetUserById(1);
+    movement.movementType = await this.MovementsTypesS.GetUserById(1);
     // movement.tag = 'string';
     movement.desc = 'string';
-    movement.createdat = new Date();
-    movement.updatedat = new Date();
+    movement.createdAt = new Date();
+    movement.updatedAt = new Date();
 
     return await this.MovementsRepo.save(movement);
   }

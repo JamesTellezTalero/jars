@@ -20,9 +20,9 @@ export class UsersService {
     user.email = 'wwwwwwwww';
     user.password = '2222222222';
     user.image = '2222222222';
-    user.darkmode = true;
-    user.createdat = new Date();
-    user.updatedat = new Date();
+    user.darkMode = true;
+    user.createdAt = new Date();
+    user.updatedAt = new Date();
 
     return this.UsersRepo.save(user);
   }
@@ -33,13 +33,13 @@ export class UsersService {
 
   async Create(users: UsersDto) {
     const newUsers = new Users();
-    newUsers.darkmode = users.darkmode;
+    newUsers.darkMode = users.darkMode;
     newUsers.username = users.username;
     newUsers.email = users.email;
     newUsers.password = users.password;
     newUsers.image = users.image;
-    newUsers.createdat = new Date();
-    newUsers.updatedat = new Date();
+    newUsers.createdAt = new Date();
+    newUsers.updatedAt = new Date();
     return this.UsersRepo.save(newUsers);
   }
 }

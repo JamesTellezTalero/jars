@@ -5,7 +5,7 @@ import { ConfigType } from '@nestjs/config';
 import { Users } from './entities/Users';
 import { Jars } from './entities/Jars';
 import { Movements } from './entities/Movements';
-import { Movementtypes } from './entities/Movementtypes';
+import { MovementTypes } from './entities/MovementTypes';
 import { Tags } from './entities/Tags';
 
 @Global()
@@ -25,7 +25,7 @@ import { Tags } from './entities/Tags';
           synchronize: false,
           autoLoadEntities: true,
           migrationsTableName: 'migrations',
-          entities: [Jars, Movements, Movementtypes, Tags, Users],
+          entities: [Jars, Movements, MovementTypes, Tags, Users],
           migrations: [],
           subscribers: [],
         };

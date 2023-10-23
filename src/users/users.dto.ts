@@ -2,7 +2,7 @@ import { IsBoolean, IsString } from 'class-validator';
 
 export class UsersDto {
   @IsBoolean()
-  darkmode: boolean;
+  darkMode: boolean;
   @IsString()
   email: string;
   @IsString()

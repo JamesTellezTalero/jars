@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Movementtypes } from 'src/database/entities/Movementtypes';
+import { MovementTypes } from 'src/database/entities/MovementTypes';
 import { Repository } from 'typeorm';
 // import { InjectModel } from '@nestjs/mongoose';
 // import { Model } from 'mongoose';
@@ -9,16 +9,16 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class MovementTypesService {
   constructor(
-    @InjectRepository(Movementtypes)
-    private readonly MovementTypesRepo: Repository<Movementtypes>,
+    @InjectRepository(MovementTypes)
+    private readonly MovementTypesRepo: Repository<MovementTypes>,
   ) {}
 
   async testCreateRecord() {
-    const movementType = new Movementtypes();
+    const movementType = new MovementTypes();
 
     {
       movementType.name = 'string';
-      movementType.createdat = new Date();
+      movementType.createdAt = new Date();
     }
     return await this.MovementTypesRepo.save(movementType);
   }

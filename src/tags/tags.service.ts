@@ -17,8 +17,8 @@ export class TagsService {
 
     tag.name = 'string';
     tag.user = await this.UsersS.GetUserById(2);
-    tag.createdat = new Date();
-    tag.updatedat = new Date();
+    tag.createdAt = new Date();
+    tag.updatedAt = new Date();
 
     return await this.TagsRepo.save(tag);
   }
