@@ -19,16 +19,16 @@ export class Tags {
   @Column("text", { name: "name" })
   name: string;
 
-  @Column("timestamp with time zone", { name: "createdat" })
-  createdat: Date;
+  @Column("timestamp with time zone", { name: "created_at" })
+  createdAt: Date;
 
-  @Column("timestamp with time zone", { name: "updatedat" })
-  updatedat: Date;
+  @Column("timestamp with time zone", { name: "updated_at" })
+  updatedAt: Date;
 
   @OneToMany(() => Movements, (movements) => movements.tag)
   movements: Movements[];
 
   @ManyToOne(() => Users, (users) => users.tags)
-  @JoinColumn([{ name: "userid", referencedColumnName: "id" }])
+  @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: Users;
 }

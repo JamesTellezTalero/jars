@@ -25,19 +25,19 @@ export class Jars {
   @Column("text", { name: "percent" })
   percent: string;
 
-  @Column("timestamp with time zone", { name: "createdat" })
-  createdat: Date;
+  @Column("timestamp with time zone", { name: "created_at" })
+  createdAt: Date;
 
-  @Column("timestamp with time zone", { name: "updatedat" })
-  updatedat: Date;
+  @Column("timestamp with time zone", { name: "updated_at" })
+  updatedAt: Date;
 
   @ManyToOne(() => Users, (users) => users.jars)
-  @JoinColumn([{ name: "userid", referencedColumnName: "id" }])
+  @JoinColumn([{ name: "user_id", referencedColumnName: "id" }])
   user: Users;
 
-  @OneToMany(() => Movements, (movements) => movements.receiverjar)
+  @OneToMany(() => Movements, (movements) => movements.receiverJar)
   movements: Movements[];
 
-  @OneToMany(() => Movements, (movements) => movements.senderjar)
+  @OneToMany(() => Movements, (movements) => movements.senderJar)
   movements2: Movements[];
 }

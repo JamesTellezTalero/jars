@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
-import { Movementtypes } from "./Movementtypes";
+import { MovementTypes } from "./MovementTypes";
 import { Jars } from "./Jars";
 import { Tags } from "./Tags";
 
@@ -25,23 +25,23 @@ export class Movements {
   @Column("text", { name: "desc" })
   desc: string;
 
-  @Column("timestamp with time zone", { name: "createdat" })
-  createdat: Date;
+  @Column("timestamp with time zone", { name: "created_at" })
+  createdAt: Date;
 
-  @Column("timestamp with time zone", { name: "updatedat" })
-  updatedat: Date;
+  @Column("timestamp with time zone", { name: "updated_at" })
+  updatedAt: Date;
 
-  @ManyToOne(() => Movementtypes, (movementtypes) => movementtypes.movements)
-  @JoinColumn([{ name: "movementtypeid", referencedColumnName: "id" }])
-  movementtype: Movementtypes;
+  @ManyToOne(() => MovementTypes, (movementTypes) => movementTypes.movements)
+  @JoinColumn([{ name: "movement_type_id", referencedColumnName: "id" }])
+  movementType: MovementTypes;
 
   @ManyToOne(() => Jars, (jars) => jars.movements)
-  @JoinColumn([{ name: "receiverjarid", referencedColumnName: "id" }])
-  receiverjar: Jars;
+  @JoinColumn([{ name: "receiver_jar_id", referencedColumnName: "id" }])
+  receiverJar: Jars;
 
   @ManyToOne(() => Jars, (jars) => jars.movements2)
-  @JoinColumn([{ name: "senderjarid", referencedColumnName: "id" }])
-  senderjar: Jars;
+  @JoinColumn([{ name: "sender_jar_id", referencedColumnName: "id" }])
+  senderJar: Jars;
 
   @ManyToOne(() => Tags, (tags) => tags.movements)
   @JoinColumn([{ name: "tagid", referencedColumnName: "id" }])

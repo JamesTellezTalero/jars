@@ -14,8 +14,8 @@ export class Users {
   @PrimaryGeneratedColumn({ type: "integer", name: "id" })
   id: number;
 
-  @Column("boolean", { name: "darkmode", default: () => "false" })
-  darkmode: boolean;
+  @Column("boolean", { name: "dark_mode", default: () => "false" })
+  darkMode: boolean;
 
   @Column("text", { name: "email" })
   email: string;
@@ -29,11 +29,11 @@ export class Users {
   @Column("text", { name: "image" })
   image: string;
 
-  @Column("timestamp with time zone", { name: "createdat" })
-  createdat: Date;
+  @Column("timestamp with time zone", { name: "created_at" })
+  createdAt: Date;
 
-  @Column("timestamp with time zone", { name: "updatedat" })
-  updatedat: Date;
+  @Column("timestamp with time zone", { name: "updated_at" })
+  updatedAt: Date;
 
   @OneToMany(() => Jars, (jars) => jars.user)
   jars: Jars[];
