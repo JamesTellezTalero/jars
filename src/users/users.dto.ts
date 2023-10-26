@@ -12,3 +12,10 @@ export class UsersDto {
   @IsString()
   image: string;
 }
+
+export class LoginUsersDto {
+  @IsString()
+  email: string;
+  @IsString()
+  password: string;
+}
