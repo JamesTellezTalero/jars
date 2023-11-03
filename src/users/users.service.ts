@@ -4,6 +4,9 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
+
+import * as crypto from 'crypto-js';
+
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/database/entities/Users';
 import { Repository } from 'typeorm';
@@ -24,7 +27,7 @@ export class UsersService {
     const user = new Users();
     user.username = '2222222';
     user.email = 'wwwwwwwww';
-    user.password = '2222222222';
+    user.password = await this.EncriptarPasswords('2222222222');
     user.image = '2222222222';
     user.darkMode = true;
     user.createdAt = new Date();
@@ -46,7 +49,7 @@ export class UsersService {
     newUsers.darkMode = users.darkMode;
     newUsers.username = users.username;
     newUsers.email = users.email;
-    newUsers.password = users.password;
+    newUsers.password = await this.EncriptarPasswords(users.password);
     newUsers.image = users.image;
     newUsers.createdAt = new Date();
     newUsers.updatedAt = new Date();
@@ -70,5 +73,21 @@ export class UsersService {
       ApiResponseM.status = HttpStatus.FORBIDDEN;
       throw new HttpException(ApiResponseM, HttpStatus.FORBIDDEN);
     }
+  }
+
+  async EncriptarPasswords(password: string): Promise<string> {
+    const SECRET_KEY = 'jars-secret';
+    const encryptedPassword = crypto.AES.encrypt(
+      password,
+      SECRET_KEY,
+    ).toString();
+    return encryptedPassword;
+  }
+
+  async DesencriptarPasswords(encryptedPassword: string): Promise<string> {
+    const SECRET_KEY = 'jars-secret';
+    const decryptedBytes = crypto.AES.decrypt(encryptedPassword, SECRET_KEY);
+    const decryptedPassword = decryptedBytes.toString(crypto.enc.Utf8);
+    return decryptedPassword;
   }
 }
