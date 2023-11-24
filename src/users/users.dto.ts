@@ -1,10 +1,19 @@
-import { IsBoolean, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsOptional,
+  IsString,
+  IsStrongPassword,
+} from 'class-validator';
 
 export class UsersDto {
+  @IsOptional()
   @IsBoolean()
   darkMode: boolean;
   @IsString()
+  @IsEmail()
   email: string;
+  @IsStrongPassword()
   @IsString()
   password: string;
   @IsString()

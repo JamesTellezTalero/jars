@@ -12,6 +12,7 @@ import { Users } from 'src/database/entities/Users';
 import { Repository } from 'typeorm';
 import { LoginUsersDto, UsersDto } from './users.dto';
 import { ApiResponseModel } from 'src/general-models/api-response.model';
+import { GeneralModuleService } from 'src/general-module/general-module.service';
 // import { Model } from 'mongoose';
 // import { Users } from './users.entities';
 // import { InjectModel } from '@nestjs/mongoose';
@@ -21,6 +22,7 @@ export class UsersService {
   constructor(
     @InjectRepository(Users)
     private readonly UsersRepo: Repository<Users>,
+    private readonly GeneralModuleS: GeneralModuleService,
   ) {}
 
   async testCreateRecord() {
@@ -40,11 +42,23 @@ export class UsersService {
     return this.UsersRepo.findOne({ where: { id } });
   }
 
+  async GetUserByEmail(email: string) {
+    return this.UsersRepo.findOne({ where: { email } });
+  }
+
   async GetUserByEmailAndPassword(email: string, password: string) {
     return this.UsersRepo.findOne({ where: { email, password } });
   }
 
   async Registro(users: UsersDto) {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    const prevExistence = await this.GetUserByEmail(users.email);
+    if (prevExistence) {
+      respM.Data = null;
+      respM.Message = 'El email enviado ya se encuentra registrado';
+      respM.StatusCode = HttpStatus.CONFLICT;
+      throw new HttpException(respM, HttpStatus.CONFLICT);
+    }
     const newUsers = new Users();
     newUsers.darkMode = users.darkMode;
     newUsers.username = users.username;
@@ -57,11 +71,7 @@ export class UsersService {
   }
 
   async Login(users: LoginUsersDto) {
-    const ApiResponseM: ApiResponseModel = {
-      Data: {},
-      StatusCode: 0,
-      Message: '',
-    };
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
     const user = await this.GetUserByEmailAndPassword(
       users.email,
       users.password,
@@ -69,9 +79,10 @@ export class UsersService {
     if (user != null) {
       return user;
     } else {
-      ApiResponseM.Message = 'El usuario enviado no se registra';
-      ApiResponseM.StatusCode = HttpStatus.FORBIDDEN;
-      throw new HttpException(ApiResponseM, HttpStatus.FORBIDDEN);
+      respM.Data = null;
+      respM.Message = 'El usuario enviado no se registra';
+      respM.StatusCode = HttpStatus.FORBIDDEN;
+      throw new HttpException(respM, HttpStatus.FORBIDDEN);
     }
   }
 

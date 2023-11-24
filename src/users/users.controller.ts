@@ -29,27 +29,9 @@ export class UsersController {
   @Post('/')
   async Registro(@Body(UsersPipe) body: UsersDto) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
-
-    // if(body.darkMode ==){
-    //   body.darkMode
-    // }
-
-    // if(body.username ==){
-    //   body.username
-    // }
-
-    // if(body.email ==){
-    //   body.email
-    // }
-
-    // if(body.image ==){
-    //   body.image
-    // }
-
     respM.StatusCode = HttpStatus.OK;
     respM.Message = 'Registro Exitoso!';
-    respM.Data = { sss: 'sss' };
-    // respM.Data = await this.UsersS.Registro(body);
+    respM.Data = await this.UsersS.Registro(body);
     return respM;
   }
 
