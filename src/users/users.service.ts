@@ -13,6 +13,7 @@ import { Repository } from 'typeorm';
 import { LoginUsersDto, UsersDto } from './users.dto';
 import { ApiResponseModel } from 'src/general-models/api-response.model';
 import { GeneralModuleService } from 'src/general-module/general-module.service';
+import { AuthService } from 'src/auth/auth.service';
 // import { Model } from 'mongoose';
 // import { Users } from './users.entities';
 // import { InjectModel } from '@nestjs/mongoose';
@@ -23,6 +24,7 @@ export class UsersService {
     @InjectRepository(Users)
     private readonly UsersRepo: Repository<Users>,
     private readonly GeneralModuleS: GeneralModuleService,
+    private readonly AuthS: AuthService,
   ) {}
 
   async testCreateRecord() {
@@ -35,7 +37,7 @@ export class UsersService {
     user.createdAt = new Date();
     user.updatedAt = new Date();
 
-    return this.UsersRepo.save(user);
+    return user;
   }
 
   async GetUserById(id: number) {
@@ -67,17 +69,18 @@ export class UsersService {
     newUsers.password = await this.EncriptarPasswords(users.password);
     newUsers.createdAt = new Date();
     newUsers.updatedAt = new Date();
-    return this.UsersRepo.save(newUsers);
+    return newUsers;
+    // return this.UsersRepo.save(newUsers);
   }
 
-  async Login(users: LoginUsersDto) {
+  async Login(userDto: LoginUsersDto) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     const user = await this.GetUserByEmailAndPassword(
-      users.email,
-      users.password,
+      userDto.email,
+      userDto.password,
     );
     if (user != null) {
-      return user;
+      return await this.AuthS.CreateJsonWebToken(user.email);
     } else {
       respM.Data = null;
       respM.Message = 'El usuario enviado no se registra';

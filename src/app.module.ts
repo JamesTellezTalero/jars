@@ -9,6 +9,7 @@ import { DatabaseModule } from './database/database.module';
 import { ConfigModule } from '@nestjs/config';
 import { TagsModule } from './tags/tags.module';
 import { GeneralModuleModule } from './general-module/general-module.module';
+import { AuthModule } from './auth/auth.module';
 import * as Joi from 'joi';
 import dbConfig from './database/dbConfig';
 
@@ -34,6 +35,7 @@ import dbConfig from './database/dbConfig';
     DatabaseModule,
     TagsModule,
     GeneralModuleModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
