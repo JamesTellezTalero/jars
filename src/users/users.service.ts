@@ -11,7 +11,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/database/entities/Users';
 import { Repository } from 'typeorm';
 import { LoginUsersDto, UsersDto } from './users.dto';
-import { ApiResponseModel } from 'src/general-interfaces/ApiResponse.model';
+import { ApiResponseModel } from 'src/general-models/api-response.model';
 // import { Model } from 'mongoose';
 // import { Users } from './users.entities';
 // import { InjectModel } from '@nestjs/mongoose';
@@ -44,13 +44,13 @@ export class UsersService {
     return this.UsersRepo.findOne({ where: { email, password } });
   }
 
-  async Create(users: UsersDto) {
+  async Registro(users: UsersDto) {
     const newUsers = new Users();
     newUsers.darkMode = users.darkMode;
     newUsers.username = users.username;
     newUsers.email = users.email;
-    newUsers.password = await this.EncriptarPasswords(users.password);
     newUsers.image = users.image;
+    newUsers.password = await this.EncriptarPasswords(users.password);
     newUsers.createdAt = new Date();
     newUsers.updatedAt = new Date();
     return this.UsersRepo.save(newUsers);
@@ -58,9 +58,9 @@ export class UsersService {
 
   async Login(users: LoginUsersDto) {
     const ApiResponseM: ApiResponseModel = {
-      item: {},
-      status: 0,
-      message: '',
+      Data: {},
+      StatusCode: 0,
+      Message: '',
     };
     const user = await this.GetUserByEmailAndPassword(
       users.email,
@@ -69,8 +69,8 @@ export class UsersService {
     if (user != null) {
       return user;
     } else {
-      ApiResponseM.message = 'El usuario enviado no se registra';
-      ApiResponseM.status = HttpStatus.FORBIDDEN;
+      ApiResponseM.Message = 'El usuario enviado no se registra';
+      ApiResponseM.StatusCode = HttpStatus.FORBIDDEN;
       throw new HttpException(ApiResponseM, HttpStatus.FORBIDDEN);
     }
   }
