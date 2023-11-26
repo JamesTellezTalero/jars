@@ -89,6 +89,22 @@ export class UsersService {
     }
   }
 
+  async GetByEmail(email: string) {
+    return await this.UsersRepo.findOne({
+      where: {
+        email,
+      },
+    });
+  }
+
+  async GetById(id: number) {
+    return await this.UsersRepo.findOne({
+      where: {
+        id,
+      },
+    });
+  }
+
   async EncriptarPasswords(password: string): Promise<string> {
     const SECRET_KEY = 'jars-secret';
     const encryptedPassword = crypto.AES.encrypt(

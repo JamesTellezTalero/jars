@@ -3,7 +3,10 @@ import {
   Controller,
   Get,
   HttpCode,
+  HttpException,
   HttpStatus,
+  Param,
+  ParseIntPipe,
   Post,
   Request,
   UseGuards,
@@ -24,12 +27,6 @@ export class UsersController {
     private readonly GeneralModuleS: GeneralModuleService,
   ) {}
 
-  @Get('/')
-  async testCreateRecord(@Request() req) {
-    console.log(req.body.jsonWebTokenInfo);
-    return await this.UsersS.testCreateRecord();
-  }
-
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('/')
@@ -48,6 +45,37 @@ export class UsersController {
       Data: await this.UsersS.Login(body),
       StatusCode: HttpStatus.OK,
       Message: 'Login Exitoso!',
+    };
+    return ApiResponseM;
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/:id')
+  async GetById(@Param('id') id: number) {
+    const ApiResponseM = new ApiResponseModel();
+    console.log('!isNaN(id)');
+    console.log(!isNaN(id));
+    if (!isNaN(id)) {
+      ApiResponseM.Data = await this.UsersS.GetById(Number(id));
+      ApiResponseM.StatusCode = HttpStatus.OK;
+      ApiResponseM.Message = 'GetById Exitoso!';
+      return ApiResponseM;
+    } else {
+      ApiResponseM.Data = null;
+      ApiResponseM.StatusCode = HttpStatus.FORBIDDEN;
+      ApiResponseM.Message = 'La propiedad id no es valida,';
+      throw new HttpException(ApiResponseM, HttpStatus.FORBIDDEN);
+    }
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/GetByEmail/:email')
+  async GetByEmail(@Param('email') email: string) {
+    console.log('GetByEmail');
+    const ApiResponseM: ApiResponseModel = {
+      Data: await this.UsersS.GetByEmail(email),
+      StatusCode: HttpStatus.OK,
+      Message: 'GetByEmail Exitoso!',
     };
     return ApiResponseM;
   }
