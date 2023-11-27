@@ -28,17 +28,17 @@ export class UsersController {
   ) {}
 
   @Public()
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.CREATED)
   @Post('/')
-  async Registro(@Body(UsersPipe) body: UsersDto) {
+  async Register(@Body(UsersPipe) body: UsersDto) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     respM.StatusCode = HttpStatus.OK;
     respM.Message = 'Registro Exitoso!';
-    respM.Data = await this.UsersS.Registro(body);
+    respM.Data = await this.UsersS.Register(body);
     return respM;
   }
 
-  @HttpCode(HttpStatus.OK)
+  @HttpCode(HttpStatus.ACCEPTED)
   @Post('/login')
   async Login(@Body(UserLoginPipe) body: LoginUsersDto) {
     const ApiResponseM: ApiResponseModel = {

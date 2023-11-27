@@ -52,7 +52,7 @@ export class UsersService {
     return this.UsersRepo.findOne({ where: { email, password } });
   }
 
-  async Registro(users: UsersDto) {
+  async Register(users: UsersDto) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     const prevExistence = await this.GetUserByEmail(users.email);
     if (prevExistence) {

@@ -15,27 +15,31 @@ export class Users {
   @PrimaryGeneratedColumn({ type: 'integer', name: 'id' })
   id: number;
 
-  @Column('boolean', { name: 'dark_mode', default: () => 'false' })
+  @Column('boolean', {
+    name: 'dark_mode',
+    default: () => 'false',
+    nullable: false,
+  })
   darkMode: boolean;
 
-  @Column('text', { name: 'email' })
+  @Column('text', { name: 'email', nullable: false })
   email: string;
 
-  @Column('text', { name: 'password' })
+  @Column('text', { name: 'password', nullable: false })
   password: string;
 
-  @Column('text', { name: 'username' })
+  @Column('text', { name: 'username', nullable: false })
   username: string;
 
-  @Column('text', { name: 'image' })
+  @Column('text', { name: 'image', nullable: false })
   image: string;
 
   @Exclude()
-  @Column('timestamp with time zone', { name: 'created_at' })
+  @Column('timestamp with time zone', { name: 'created_at', nullable: false })
   createdAt: Date;
 
   @Exclude()
-  @Column('timestamp with time zone', { name: 'updated_at' })
+  @Column('timestamp with time zone', { name: 'updated_at', nullable: false })
   updatedAt: Date;
 
   @OneToMany(() => Jars, (jars) => jars.user)
