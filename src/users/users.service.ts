@@ -84,25 +84,43 @@ export class UsersService {
     } else {
       respM.Data = null;
       respM.Message = 'El usuario enviado no se registra';
-      respM.StatusCode = HttpStatus.FORBIDDEN;
-      throw new HttpException(respM, HttpStatus.FORBIDDEN);
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
   }
 
   async GetByEmail(email: string) {
-    return await this.UsersRepo.findOne({
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    const user = await this.UsersRepo.findOne({
       where: {
         email,
       },
     });
+    if (user != null) {
+      return user;
+    } else {
+      respM.Data = null;
+      respM.Message = 'El usuario enviado no se registra';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
   }
 
   async GetById(id: number) {
-    return await this.UsersRepo.findOne({
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    const user = await this.UsersRepo.findOne({
       where: {
         id,
       },
     });
+    if (user != null) {
+      return user;
+    } else {
+      respM.Data = null;
+      respM.Message = 'El usuario enviado no se registra';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
   }
 
   async EncriptarPasswords(password: string): Promise<string> {
