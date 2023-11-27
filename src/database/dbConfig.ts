@@ -10,5 +10,8 @@ export default registerAs('dbConfig', () => {
       password: process.env.DATABASE_PASSWORD,
       database: process.env.DATABASE_DATABASE,
     },
+    jwt: {
+      passwordSecretEncKey: process.env.PASSWORD_SECRET_ENC_KEY,
+    },
   };
 });

@@ -69,8 +69,7 @@ export class UsersService {
     newUsers.password = await this.EncriptarPasswords(users.password);
     newUsers.createdAt = new Date();
     newUsers.updatedAt = new Date();
-    return newUsers;
-    // return this.UsersRepo.save(newUsers);
+    return this.UsersRepo.save(newUsers);
   }
 
   async Login(userDto: LoginUsersDto) {
@@ -124,7 +123,7 @@ export class UsersService {
   }
 
   async EncriptarPasswords(password: string): Promise<string> {
-    const SECRET_KEY = 'jars-secret';
+    const SECRET_KEY = process.env.PASSWORD_SECRET_ENC_KEY;
     const encryptedPassword = crypto.AES.encrypt(
       password,
       SECRET_KEY,
@@ -133,7 +132,7 @@ export class UsersService {
   }
 
   async DesencriptarPasswords(encryptedPassword: string): Promise<string> {
-    const SECRET_KEY = 'jars-secret';
+    const SECRET_KEY = process.env.PASSWORD_SECRET_ENC_KEY;
     const decryptedBytes = crypto.AES.decrypt(encryptedPassword, SECRET_KEY);
     const decryptedPassword = decryptedBytes.toString(crypto.enc.Utf8);
     return decryptedPassword;

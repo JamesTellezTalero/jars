@@ -26,6 +26,7 @@ import dbConfig from './database/dbConfig';
         DATABASE_PORT: Joi.number().required(),
         DATABASE_PASSWORD: Joi.string().required(),
         DATABASE_DATABASE: Joi.string().required(),
+        PASSWORD_SECRET_ENC_KEY: Joi.string().required(),
       }),
     }),
     UsersModule,
