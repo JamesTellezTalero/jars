@@ -21,3 +21,16 @@ export class JarsDto {
   @IsNumber()
   userId: number | UsersDto;
 }
+
+export class UpdateJarsDto {
+  @IsString()
+  @IsOptional()
+  name: string;
+  @IsString()
+  @IsOptional()
+  color: string;
+  @IsOptional()
+  @IsPositive()
+  @IsNumber()
+  percent: number;
+}
