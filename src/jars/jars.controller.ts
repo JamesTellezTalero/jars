@@ -54,7 +54,7 @@ export class JarsController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Get('/')
+  @Get('/:id')
   async GetById(@Param('id') id: string) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     if (isNaN(Number(id))) {
@@ -71,7 +71,7 @@ export class JarsController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Get('/')
+  @Get('/user/:id')
   async GetByUserId(@Param('id') id: string) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     if (isNaN(Number(id))) {

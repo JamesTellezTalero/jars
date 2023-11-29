@@ -32,11 +32,12 @@ export class JarsService {
     return this.JarsRepo.save(jar);
   }
 
-  async Create(jar: JarsDto) {
+  async Create(jar: JarsDto): Promise<Jars> {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     const user = await this.UsersS.GetById(Number(jar.userId));
     if (user != null) {
       const newJar = new Jars();
+      await this.ValidateUserPercentForNewJar(Number(jar.userId), jar.percent);
       newJar.name = jar.name;
       newJar.color = jar.color;
       newJar.percent = jar.percent;
@@ -51,7 +52,8 @@ export class JarsService {
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
   }
-  async Update(jar: UpdateJarsDto, id: number) {
+
+  async Update(jar: UpdateJarsDto, id: number): Promise<Jars> {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     const existJar = await this.GetById(Number(id));
     if (existJar == null) {
@@ -68,11 +70,13 @@ export class JarsService {
       return await this.JarsRepo.save(existJar);
     }
   }
-  async GetById(id: number) {
+
+  async GetById(id: number): Promise<Jars> {
     return this.JarsRepo.findOne({ where: { id } });
   }
-  async GetUserById(id: number) {
-    return this.JarsRepo.findOne({
+
+  async GetUserById(id: number): Promise<Jars[]> {
+    return this.JarsRepo.find({
       where: {
         user: {
           id,
@@ -80,6 +84,7 @@ export class JarsService {
       },
     });
   }
+
   async Delete(id: number) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     const existJar = await this.GetById(Number(id));
@@ -90,6 +95,29 @@ export class JarsService {
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     } else {
       return this.JarsRepo.remove(await this.GetById(id));
+    }
+  }
+
+  async ValidateUserPercentForNewJar(
+    userId: number,
+    incomePercent: number,
+  ): Promise<boolean> {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    const Jars = await this.GetUserById(Number(userId));
+    if (Jars.length == 0) {
+      return true;
+    } else {
+      Jars.map((e) => {
+        incomePercent += e.percent;
+      });
+      if (incomePercent <= 100) {
+        return true;
+      } else {
+        respM.Data = null;
+        respM.Message = 'El porcentaje total excede el permitido.';
+        respM.StatusCode = HttpStatus.FORBIDDEN;
+        throw new HttpException(respM, HttpStatus.FORBIDDEN);
+      }
     }
   }
 }
