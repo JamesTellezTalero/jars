@@ -105,6 +105,24 @@ export class UsersService {
     }
   }
 
+  async GetByEmailWithJars(email: string) {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    const user = await this.UsersRepo.findOne({
+      where: {
+        email,
+      },
+      relations: ['jars'],
+    });
+    if (user != null) {
+      return user;
+    } else {
+      respM.Data = null;
+      respM.Message = 'El usuario enviado no se registra';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
+  }
+
   async GetById(id: number) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     const user = await this.UsersRepo.findOne({

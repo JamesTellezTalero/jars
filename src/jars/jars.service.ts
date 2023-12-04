@@ -14,22 +14,37 @@ export class JarsService {
   constructor(
     @InjectRepository(Jars)
     private readonly JarsRepo: Repository<Jars>,
-
     private readonly UsersS: UsersService,
     private readonly GeneralModuleS: GeneralModuleService,
   ) {}
 
-  async testCreateRecord() {
-    const jar = new Jars();
+  private readonly InitJarsData: JarsDto[] = [
+    { color: 'Morado', name: 'Necessities', percent: 55, userId: 0 },
+    { color: 'Azul', name: 'Education', percent: 10, userId: 0 },
+    { color: 'Amarillo', name: 'Saving', percent: 10, userId: 0 },
+    { color: 'Verde', name: 'Play', percent: 10, userId: 0 },
+    { color: 'AzulAguaMarina', name: 'Invest', percent: 10, userId: 0 },
+    { color: 'Rosa', name: 'Saving', percent: 5, userId: 0 },
+  ];
 
-    jar.name = 'string';
-    jar.color = 'string';
-    jar.user = await this.UsersS.GetUserById(2);
-    jar.percent = 80;
-    jar.createdAt = new Date();
-    jar.updatedAt = new Date();
-
-    return this.JarsRepo.save(jar);
+  async InitJarsForUser(Email: string) {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    const user = await this.UsersS.GetByEmailWithJars(Email);
+    if (user.jars.length == 0) {
+      for (let i = 0; i < this.InitJarsData.length; i++) {
+        const e = this.InitJarsData[i];
+        e.userId = user.id;
+        await this.Create(e);
+        if (i == this.InitJarsData.length - 1) {
+          return await this.GetUserById(user.id);
+        }
+      }
+    } else {
+      respM.Data = null;
+      respM.Message = 'El usuario ya registra Jars';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
   }
 
   async Create(jar: JarsDto): Promise<Jars> {

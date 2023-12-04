@@ -33,6 +33,16 @@ export class JarsController {
     return respM;
   }
 
+  @HttpCode(HttpStatus.CREATED)
+  @Post('/InitJarsForUser/:email')
+  async InitJarsForUser(@Param('email') email: string) {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    respM.Data = await this.JarsS.InitJarsForUser(email);
+    respM.Message = 'Init Jars Generados!';
+    respM.StatusCode = HttpStatus.CREATED;
+    return respM;
+  }
+
   @HttpCode(HttpStatus.ACCEPTED)
   @Put('/:id')
   async Update(
