@@ -12,6 +12,7 @@ import { GeneralModuleModule } from './general-module/general-module.module';
 import { AuthModule } from './auth/auth.module';
 import * as Joi from 'joi';
 import dbConfig from './database/dbConfig';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
@@ -28,6 +29,9 @@ import dbConfig from './database/dbConfig';
         DATABASE_DATABASE: Joi.string().required(),
         PASSWORD_SECRET_ENC_KEY: Joi.string().required(),
       }),
+    }),
+    MulterModule.register({
+      dest: './src/assets/UserImgs',
     }),
     UsersModule,
     JarsModule,

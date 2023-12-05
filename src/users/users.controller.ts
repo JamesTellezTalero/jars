@@ -8,8 +8,11 @@ import {
   Param,
   ParseIntPipe,
   Post,
+  Put,
   Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { LoginUsersDto, UsersDto } from './users.dto';
@@ -19,6 +22,13 @@ import { ApiResponseModel } from 'src/general-models/api-response.model';
 import { GeneralModuleService } from 'src/general-module/general-module.service';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { Public } from 'src/auth/auth-guard.decorator';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { v4 as uuidv4 } from 'uuid';
+import {
+  editFileName,
+  imageFileFilter,
+} from 'src/general-module/general-module.utils';
 
 @Controller('users')
 export class UsersController {
@@ -49,12 +59,32 @@ export class UsersController {
     return ApiResponseM;
   }
 
+  @HttpCode(HttpStatus.CREATED)
+  @Put('/:email')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './src/assets/UserImgs',
+        filename: editFileName,
+      }),
+      fileFilter: imageFileFilter,
+    }),
+  )
+  async UpdateImg(
+    @Param('email') email: string,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    const ApiResponseM = new ApiResponseModel();
+    ApiResponseM.Data = await this.UsersS.UpdateImg(email, file.path);
+    ApiResponseM.StatusCode = HttpStatus.CREATED;
+    ApiResponseM.Message = 'UpdateImg Exitoso!';
+    return ApiResponseM;
+  }
+
   @HttpCode(HttpStatus.OK)
   @Get('/:id')
   async GetById(@Param('id') id: number) {
     const ApiResponseM = new ApiResponseModel();
-    console.log('!isNaN(id)');
-    console.log(!isNaN(id));
     if (!isNaN(id)) {
       ApiResponseM.Data = await this.UsersS.GetById(Number(id));
       ApiResponseM.StatusCode = HttpStatus.OK;
@@ -71,7 +101,6 @@ export class UsersController {
   @HttpCode(HttpStatus.OK)
   @Get('/GetByEmail/:email')
   async GetByEmail(@Param('email') email: string) {
-    console.log('GetByEmail');
     const ApiResponseM: ApiResponseModel = {
       Data: await this.UsersS.GetByEmail(email),
       StatusCode: HttpStatus.OK,

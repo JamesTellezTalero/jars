@@ -14,9 +14,8 @@ import { LoginUsersDto, UsersDto } from './users.dto';
 import { ApiResponseModel } from 'src/general-models/api-response.model';
 import { GeneralModuleService } from 'src/general-module/general-module.service';
 import { AuthService } from 'src/auth/auth.service';
-// import { Model } from 'mongoose';
-// import { Users } from './users.entities';
-// import { InjectModel } from '@nestjs/mongoose';
+
+import * as fs from 'fs';
 
 @Injectable()
 export class UsersService {
@@ -80,6 +79,27 @@ export class UsersService {
     );
     if (user != null) {
       return await this.AuthS.CreateJsonWebToken(user.email);
+    } else {
+      respM.Data = null;
+      respM.Message = 'El usuario enviado no se registra';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  async UpdateImg(email: string, filePath: string) {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    const user = await this.GetByEmail(email);
+    if (user != null) {
+      if (user.image != null) {
+        fs.unlink(user.image, (err) => {
+          if (err) {
+            console.log(err);
+          }
+        });
+      }
+      user.image = filePath;
+      return await this.UsersRepo.save(user);
     } else {
       respM.Data = null;
       respM.Message = 'El usuario enviado no se registra';

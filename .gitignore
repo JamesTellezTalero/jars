@@ -38,3 +38,10 @@ lerna-debug.log*
 
 # .pem
 *.pem
+
+# .png
+*.png
+# .jpg
+*.jpg
+# .jpeg
+*.jpeg
