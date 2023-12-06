@@ -10,7 +10,12 @@ import * as crypto from 'crypto-js';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/database/entities/Users';
 import { Repository } from 'typeorm';
-import { LoginUsersDto, UsersDto } from './users.dto';
+import {
+  LoginUsersDto,
+  UsersDto,
+  UsersUpdateDto,
+  UsersUpdatePasswordDto,
+} from './users.dto';
 import { ApiResponseModel } from 'src/general-models/api-response.model';
 import { GeneralModuleService } from 'src/general-module/general-module.service';
 import { AuthService } from 'src/auth/auth.service';
@@ -108,6 +113,56 @@ export class UsersService {
     }
   }
 
+  async Update(userDto: UsersUpdateDto) {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    const user = await this.GetById(userDto.id);
+    if (user != null) {
+      user.darkMode = userDto?.darkMode || user.darkMode;
+      user.username = userDto.username;
+      user.updatedAt = new Date();
+      return await this.UsersRepo.save(user);
+    } else {
+      respM.Data = null;
+      respM.Message = 'El usuario enviado no se registra';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  async UpdatePassword(userDto: UsersUpdatePasswordDto) {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    const user = await this.GetUserByEmail(userDto.email);
+    console.log('userDto.oldPassword');
+    console.log(userDto.oldPassword);
+    console.log('userDto.newPassword');
+    console.log(userDto.newPassword);
+    userDto.oldPassword = await this.EncriptarPasswords(userDto.oldPassword);
+    userDto.newPassword = await this.EncriptarPasswords(userDto.newPassword);
+    console.log('userDto.oldPassword');
+    console.log(userDto.oldPassword);
+    console.log('userDto.newPassword');
+    console.log(userDto.newPassword);
+    console.log('user.password');
+    console.log(user.password);
+
+    if (user == null) {
+      respM.Data = null;
+      respM.Message = 'El usuario enviado no se registra';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    } else if (user.password != userDto.oldPassword) {
+      respM.Data = null;
+      respM.Message =
+        'La contraseña envida no coincide con la contraseña actual';
+      respM.StatusCode = HttpStatus.FORBIDDEN;
+      throw new HttpException(respM, HttpStatus.FORBIDDEN);
+    } else {
+      user.password = userDto.newPassword;
+      user.updatedAt = new Date();
+      return await this.UsersRepo.save(user);
+    }
+  }
+
   async GetByEmail(email: string) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     const user = await this.UsersRepo.findOne({
@@ -161,18 +216,9 @@ export class UsersService {
   }
 
   async EncriptarPasswords(password: string): Promise<string> {
-    const SECRET_KEY = process.env.PASSWORD_SECRET_ENC_KEY;
-    const encryptedPassword = crypto.AES.encrypt(
-      password,
-      SECRET_KEY,
-    ).toString();
+    let encryptedPassword = crypto.SHA256(password);
+    encryptedPassword = encryptedPassword.toString(crypto.enc.Base64);
+    console.log(encryptedPassword);
     return encryptedPassword;
-  }
-
-  async DesencriptarPasswords(encryptedPassword: string): Promise<string> {
-    const SECRET_KEY = process.env.PASSWORD_SECRET_ENC_KEY;
-    const decryptedBytes = crypto.AES.decrypt(encryptedPassword, SECRET_KEY);
-    const decryptedPassword = decryptedBytes.toString(crypto.enc.Utf8);
-    return decryptedPassword;
   }
 }

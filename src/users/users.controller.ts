@@ -15,7 +15,12 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { LoginUsersDto, UsersDto } from './users.dto';
+import {
+  LoginUsersDto,
+  UsersDto,
+  UsersUpdateDto,
+  UsersUpdatePasswordDto,
+} from './users.dto';
 import { UsersPipe } from 'src/common/users/users.pipe';
 import { UserLoginPipe } from 'src/common/users/user-login.pipe';
 import { ApiResponseModel } from 'src/general-models/api-response.model';
@@ -29,6 +34,8 @@ import {
   editFileName,
   imageFileFilter,
 } from 'src/general-module/general-module.utils';
+import { UsersUpdatePipe } from 'src/common/users/users-update.pipe';
+import { UsersUpdatePasswordPipe } from 'src/common/users/users-update-password.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -59,7 +66,29 @@ export class UsersController {
     return ApiResponseM;
   }
 
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.ACCEPTED)
+  @Put('/')
+  async Update(@Body(UsersUpdatePipe) body: UsersUpdateDto) {
+    const ApiResponseM = new ApiResponseModel();
+    ApiResponseM.Data = await this.UsersS.Update(body);
+    ApiResponseM.StatusCode = HttpStatus.ACCEPTED;
+    ApiResponseM.Message = 'Update Exitoso!';
+    return ApiResponseM;
+  }
+
+  @HttpCode(HttpStatus.ACCEPTED)
+  @Put('/UpdatePassword/')
+  async UpdatePassword(
+    @Body(UsersUpdatePasswordPipe) body: UsersUpdatePasswordDto,
+  ) {
+    const ApiResponseM = new ApiResponseModel();
+    ApiResponseM.Data = await this.UsersS.UpdatePassword(body);
+    ApiResponseM.StatusCode = HttpStatus.ACCEPTED;
+    ApiResponseM.Message = 'Update Exitoso!';
+    return ApiResponseM;
+  }
+
+  @HttpCode(HttpStatus.ACCEPTED)
   @Put('/:email')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -76,7 +105,7 @@ export class UsersController {
   ) {
     const ApiResponseM = new ApiResponseModel();
     ApiResponseM.Data = await this.UsersS.UpdateImg(email, file.path);
-    ApiResponseM.StatusCode = HttpStatus.CREATED;
+    ApiResponseM.StatusCode = HttpStatus.ACCEPTED;
     ApiResponseM.Message = 'UpdateImg Exitoso!';
     return ApiResponseM;
   }
