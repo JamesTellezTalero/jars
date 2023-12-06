@@ -27,7 +27,7 @@ export class MovementsService {
     movement.amount = 222;
     movement.senderJar = (await this.JarsS.GetUserById(1))[0];
     movement.receiverJar = (await this.JarsS.GetUserById(1))[0];
-    movement.movementType = await this.MovementsTypesS.GetUserById(1);
+    movement.movementType = await this.MovementsTypesS.GetById(1);
     // movement.tag = 'string';
     movement.desc = 'string';
     movement.createdAt = new Date();
