@@ -13,6 +13,7 @@ import { AuthModule } from './auth/auth.module';
 import * as Joi from 'joi';
 import dbConfig from './database/dbConfig';
 import { MulterModule } from '@nestjs/platform-express';
+import { CuteOffDateCronModule } from './cute-off-date-cron/cute-off-date-cron.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { MulterModule } from '@nestjs/platform-express';
     TagsModule,
     GeneralModuleModule,
     AuthModule,
+    CuteOffDateCronModule,
   ],
   controllers: [AppController],
   providers: [AppService],

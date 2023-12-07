@@ -9,7 +9,6 @@ export class TagsService {
   constructor(
     @InjectRepository(Tags)
     private readonly TagsRepo: Repository<Tags>,
-
     private readonly UsersS: UsersService,
   ) {}
   async testCreateRecord() {

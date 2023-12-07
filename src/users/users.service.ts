@@ -9,7 +9,7 @@ import * as crypto from 'crypto-js';
 
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from 'src/database/entities/Users';
-import { Repository } from 'typeorm';
+import { Between, Repository } from 'typeorm';
 import {
   LoginUsersDto,
   UsersDto,
@@ -31,19 +31,6 @@ export class UsersService {
     private readonly GeneralModuleS: GeneralModuleService,
     private readonly AuthS: AuthService,
   ) {}
-
-  async testCreateRecord() {
-    const user = new Users();
-    user.username = '2222222';
-    user.email = 'wwwwwwwww';
-    user.password = await this.EncriptarPasswords('2222222222');
-    user.image = '2222222222';
-    user.darkMode = true;
-    user.createdAt = new Date();
-    user.updatedAt = new Date();
-
-    return user;
-  }
 
   async GetUserById(id: number) {
     return this.UsersRepo.findOne({ where: { id } });
@@ -167,6 +154,21 @@ export class UsersService {
       user.cute_off_date = new Date(userDto?.cute_off_date);
       return await this.UsersRepo.save(user);
     }
+  }
+
+  async GeyByTodayCuteOffDates() {
+    let dateAm = new Date();
+    dateAm.setHours(0, 0, 0, 0);
+    let datePm = new Date();
+    datePm.setHours(23, 59, 59, 0);
+    return await this.UsersRepo.find({
+      where: {
+        cute_off_date: Between(dateAm, datePm),
+      },
+      order: {
+        id: 'ASC',
+      },
+    });
   }
 
   async GetByEmail(email: string) {
