@@ -43,6 +43,9 @@ export class Users {
   @Column('timestamp with time zone', { name: 'cute_off_date', nullable: true })
   cute_off_date: Date;
 
+  @Column('integer', { name: 'general_income', nullable: true })
+  general_income: number;
+
   @OneToMany(() => Jars, (jars) => jars.user)
   jars: Jars[];
 

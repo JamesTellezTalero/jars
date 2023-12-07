@@ -110,6 +110,7 @@ export class UsersService {
       user.cute_off_date =
         new Date(userDto?.cute_off_date) || user.cute_off_date;
       user.updatedAt = new Date();
+      user.general_income = userDto.general_income || user.general_income;
       return await this.UsersRepo.save(user);
     } else {
       respM.Data = null;

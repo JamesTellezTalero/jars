@@ -40,6 +40,10 @@ export class UsersUpdateDto {
   @IsOptional()
   @IsString()
   cute_off_date: string;
+  @IsOptional()
+  @IsPositive()
+  @IsNumber()
+  general_income: number;
 }
 
 export class UsersUpdateCuteOffDateDto {

@@ -8,11 +8,11 @@ export class CuteOffDateCronService {
 
   private readonly logger = new Logger('CuteOffDateCron');
 
-  @Cron('*/10 * * * * *')
-  async CuteOffDateCron() {
-    let users = await this.UsersS.GeyByTodayCuteOffDates();
-    users.map((e) => {
-      this.logger.verbose(e.id);
-    });
-  }
+  // @Cron('*/10 * * * * *')
+  // async CuteOffDateCron() {
+  //   let users = await this.UsersS.GeyByTodayCuteOffDates();
+  //   users.map((e) => {
+  //     this.logger.verbose(e.id);
+  //   });
+  // }
 }
