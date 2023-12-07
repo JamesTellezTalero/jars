@@ -1,5 +1,6 @@
 import {
   IsBoolean,
+  IsDate,
   IsEmail,
   IsNumber,
   IsOptional,
@@ -36,6 +37,17 @@ export class UsersUpdateDto {
   darkMode: boolean;
   @IsString()
   username: string;
+  @IsOptional()
+  @IsString()
+  cute_off_date: string;
+}
+
+export class UsersUpdateCuteOffDateDto {
+  @IsPositive()
+  @IsNumber()
+  id: number;
+  @IsString()
+  cute_off_date: string;
 }
 
 export class LoginUsersDto {

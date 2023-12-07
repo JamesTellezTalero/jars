@@ -18,6 +18,7 @@ import { UsersService } from './users.service';
 import {
   LoginUsersDto,
   UsersDto,
+  UsersUpdateCuteOffDateDto,
   UsersUpdateDto,
   UsersUpdatePasswordDto,
 } from './users.dto';
@@ -36,6 +37,7 @@ import {
 } from 'src/general-module/general-module.utils';
 import { UsersUpdatePipe } from 'src/common/users/users-update.pipe';
 import { UsersUpdatePasswordPipe } from 'src/common/users/users-update-password.pipe';
+import { UsersUpdateCuteOffDatePipe } from 'src/common/users/users-update-cute-off-date.pipe';
 
 @Controller('users')
 export class UsersController {
@@ -85,6 +87,18 @@ export class UsersController {
     ApiResponseM.Data = await this.UsersS.UpdatePassword(body);
     ApiResponseM.StatusCode = HttpStatus.ACCEPTED;
     ApiResponseM.Message = 'Update Exitoso!';
+    return ApiResponseM;
+  }
+
+  @HttpCode(HttpStatus.ACCEPTED)
+  @Put('/UpdateCuteOffDate/')
+  async UpdateCuteOffDate(
+    @Body(UsersUpdateCuteOffDatePipe) body: UsersUpdateCuteOffDateDto,
+  ) {
+    const ApiResponseM = new ApiResponseModel();
+    ApiResponseM.Data = await this.UsersS.UpdateCuteOffDate(body);
+    ApiResponseM.StatusCode = HttpStatus.ACCEPTED;
+    ApiResponseM.Message = 'UpdateCuteOffDate Exitoso!';
     return ApiResponseM;
   }
 

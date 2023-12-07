@@ -13,6 +13,7 @@ import { Repository } from 'typeorm';
 import {
   LoginUsersDto,
   UsersDto,
+  UsersUpdateCuteOffDateDto,
   UsersUpdateDto,
   UsersUpdatePasswordDto,
 } from './users.dto';
@@ -119,6 +120,8 @@ export class UsersService {
     if (user != null) {
       user.darkMode = userDto?.darkMode || user.darkMode;
       user.username = userDto.username;
+      user.cute_off_date =
+        new Date(userDto?.cute_off_date) || user.cute_off_date;
       user.updatedAt = new Date();
       return await this.UsersRepo.save(user);
     } else {
@@ -132,19 +135,8 @@ export class UsersService {
   async UpdatePassword(userDto: UsersUpdatePasswordDto) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     const user = await this.GetUserByEmail(userDto.email);
-    console.log('userDto.oldPassword');
-    console.log(userDto.oldPassword);
-    console.log('userDto.newPassword');
-    console.log(userDto.newPassword);
     userDto.oldPassword = await this.EncriptarPasswords(userDto.oldPassword);
     userDto.newPassword = await this.EncriptarPasswords(userDto.newPassword);
-    console.log('userDto.oldPassword');
-    console.log(userDto.oldPassword);
-    console.log('userDto.newPassword');
-    console.log(userDto.newPassword);
-    console.log('user.password');
-    console.log(user.password);
-
     if (user == null) {
       respM.Data = null;
       respM.Message = 'El usuario enviado no se registra';
@@ -159,6 +151,20 @@ export class UsersService {
     } else {
       user.password = userDto.newPassword;
       user.updatedAt = new Date();
+      return await this.UsersRepo.save(user);
+    }
+  }
+
+  async UpdateCuteOffDate(userDto: UsersUpdateCuteOffDateDto) {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    const user = await this.GetById(userDto.id);
+    if (user == null) {
+      respM.Data = null;
+      respM.Message = 'El usuario enviado no se registra';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    } else {
+      user.cute_off_date = new Date(userDto?.cute_off_date);
       return await this.UsersRepo.save(user);
     }
   }
@@ -218,7 +224,6 @@ export class UsersService {
   async EncriptarPasswords(password: string): Promise<string> {
     let encryptedPassword = crypto.SHA256(password);
     encryptedPassword = encryptedPassword.toString(crypto.enc.Base64);
-    console.log(encryptedPassword);
     return encryptedPassword;
   }
 }

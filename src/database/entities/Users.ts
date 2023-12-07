@@ -34,13 +34,14 @@ export class Users {
   @Column('text', { name: 'image', nullable: false })
   image: string;
 
-  @Exclude()
   @Column('timestamp with time zone', { name: 'created_at', nullable: false })
   createdAt: Date;
 
-  @Exclude()
   @Column('timestamp with time zone', { name: 'updated_at', nullable: false })
   updatedAt: Date;
+
+  @Column('timestamp with time zone', { name: 'cute_off_date', nullable: true })
+  cute_off_date: Date;
 
   @OneToMany(() => Jars, (jars) => jars.user)
   jars: Jars[];
