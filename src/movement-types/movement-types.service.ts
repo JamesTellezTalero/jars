@@ -15,6 +15,7 @@ export class MovementTypesService {
     private readonly MovementTypesRepo: Repository<MovementTypes>,
     private readonly GeneralModuleS: GeneralModuleService,
   ) {}
+  private readonly ControllerContext = 'Movement Types: ';
 
   async Create(body: MovementTypeDto) {
     let newMovementType = new MovementTypes();
@@ -28,7 +29,9 @@ export class MovementTypesService {
     const MovementType = await this.GetById(Number(body.id));
     if (MovementType == null) {
       respM.Data = null;
-      respM.Message = 'El Movement Type enviado no se registra o es invalido.';
+      respM.Message =
+        this.ControllerContext +
+        'El Movement Type enviado no se registra o es invalido.';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     } else {

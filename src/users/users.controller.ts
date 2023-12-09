@@ -46,13 +46,15 @@ export class UsersController {
     private readonly GeneralModuleS: GeneralModuleService,
   ) {}
 
+  private readonly ControllerContext = 'Users: ';
+
   @Public()
   @HttpCode(HttpStatus.CREATED)
   @Post('/')
   async Register(@Body(UsersPipe) body: UsersDto) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     respM.StatusCode = HttpStatus.OK;
-    respM.Message = 'Registro Exitoso!';
+    respM.Message = this.ControllerContext + 'Registro Success!';
     respM.Data = await this.UsersS.Register(body);
     return respM;
   }
@@ -60,12 +62,11 @@ export class UsersController {
   @HttpCode(HttpStatus.ACCEPTED)
   @Post('/login')
   async Login(@Body(UserLoginPipe) body: LoginUsersDto) {
-    const ApiResponseM: ApiResponseModel = {
-      Data: await this.UsersS.Login(body),
-      StatusCode: HttpStatus.OK,
-      Message: 'Login Exitoso!',
-    };
-    return ApiResponseM;
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    respM.Data = await this.UsersS.Login(body);
+    respM.StatusCode = HttpStatus.OK;
+    respM.Message = this.ControllerContext + 'Login Success!';
+    return respM;
   }
 
   @HttpCode(HttpStatus.ACCEPTED)
@@ -74,7 +75,7 @@ export class UsersController {
     const ApiResponseM = new ApiResponseModel();
     ApiResponseM.Data = await this.UsersS.Update(body);
     ApiResponseM.StatusCode = HttpStatus.ACCEPTED;
-    ApiResponseM.Message = 'Update Exitoso!';
+    ApiResponseM.Message = this.ControllerContext + 'Update Success!';
     return ApiResponseM;
   }
 
@@ -86,7 +87,7 @@ export class UsersController {
     const ApiResponseM = new ApiResponseModel();
     ApiResponseM.Data = await this.UsersS.UpdatePassword(body);
     ApiResponseM.StatusCode = HttpStatus.ACCEPTED;
-    ApiResponseM.Message = 'Update Exitoso!';
+    ApiResponseM.Message = this.ControllerContext + 'Update Success!';
     return ApiResponseM;
   }
 
@@ -98,7 +99,8 @@ export class UsersController {
     const ApiResponseM = new ApiResponseModel();
     ApiResponseM.Data = await this.UsersS.UpdateCuteOffDate(body);
     ApiResponseM.StatusCode = HttpStatus.ACCEPTED;
-    ApiResponseM.Message = 'UpdateCuteOffDate Exitoso!';
+    ApiResponseM.Message =
+      this.ControllerContext + 'UpdateCuteOffDate Success!';
     return ApiResponseM;
   }
 
@@ -120,7 +122,7 @@ export class UsersController {
     const ApiResponseM = new ApiResponseModel();
     ApiResponseM.Data = await this.UsersS.UpdateImg(email, file.path);
     ApiResponseM.StatusCode = HttpStatus.ACCEPTED;
-    ApiResponseM.Message = 'UpdateImg Exitoso!';
+    ApiResponseM.Message = this.ControllerContext + 'UpdateImg Success!';
     return ApiResponseM;
   }
 
@@ -131,12 +133,13 @@ export class UsersController {
     if (!isNaN(id)) {
       ApiResponseM.Data = await this.UsersS.GetById(Number(id));
       ApiResponseM.StatusCode = HttpStatus.OK;
-      ApiResponseM.Message = 'GetById Exitoso!';
+      ApiResponseM.Message = this.ControllerContext + 'GetById Success!';
       return ApiResponseM;
     } else {
       ApiResponseM.Data = null;
       ApiResponseM.StatusCode = HttpStatus.FORBIDDEN;
-      ApiResponseM.Message = 'La propiedad id no es valida,';
+      ApiResponseM.Message =
+        this.ControllerContext + 'The id property is not valid';
       throw new HttpException(ApiResponseM, HttpStatus.FORBIDDEN);
     }
   }
@@ -147,7 +150,7 @@ export class UsersController {
     const ApiResponseM: ApiResponseModel = {
       Data: await this.UsersS.GetByEmail(email),
       StatusCode: HttpStatus.OK,
-      Message: 'GetByEmail Exitoso!',
+      Message: this.ControllerContext + 'GetByEmail Success!',
     };
     return ApiResponseM;
   }

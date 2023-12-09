@@ -32,6 +32,8 @@ export class UsersService {
     private readonly AuthS: AuthService,
   ) {}
 
+  private readonly ControllerContext = 'Users: ';
+
   async GetUserById(id: number) {
     return this.UsersRepo.findOne({ where: { id } });
   }
@@ -49,7 +51,8 @@ export class UsersService {
     const prevExistence = await this.GetUserByEmail(users.email);
     if (prevExistence) {
       respM.Data = null;
-      respM.Message = 'El email enviado ya se encuentra registrado';
+      respM.Message =
+        this.ControllerContext + 'The email sent is already registered';
       respM.StatusCode = HttpStatus.CONFLICT;
       throw new HttpException(respM, HttpStatus.CONFLICT);
     }
@@ -74,7 +77,8 @@ export class UsersService {
       return await this.AuthS.CreateJsonWebToken(user.email);
     } else {
       respM.Data = null;
-      respM.Message = 'El usuario enviado no se registra';
+      respM.Message =
+        this.ControllerContext + 'Submitted user does not register';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
@@ -95,7 +99,8 @@ export class UsersService {
       return await this.UsersRepo.save(user);
     } else {
       respM.Data = null;
-      respM.Message = 'El usuario enviado no se registra';
+      respM.Message =
+        this.ControllerContext + 'Submitted user does not register';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
@@ -114,7 +119,8 @@ export class UsersService {
       return await this.UsersRepo.save(user);
     } else {
       respM.Data = null;
-      respM.Message = 'El usuario enviado no se registra';
+      respM.Message =
+        this.ControllerContext + 'Submitted user does not register';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
@@ -127,13 +133,15 @@ export class UsersService {
     userDto.newPassword = await this.EncriptarPasswords(userDto.newPassword);
     if (user == null) {
       respM.Data = null;
-      respM.Message = 'El usuario enviado no se registra';
+      respM.Message =
+        this.ControllerContext + 'Submitted user does not register';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     } else if (user.password != userDto.oldPassword) {
       respM.Data = null;
       respM.Message =
-        'La contraseña envida no coincide con la contraseña actual';
+        this.ControllerContext +
+        'The sent password does not match the current password';
       respM.StatusCode = HttpStatus.FORBIDDEN;
       throw new HttpException(respM, HttpStatus.FORBIDDEN);
     } else {
@@ -148,7 +156,8 @@ export class UsersService {
     const user = await this.GetById(userDto.id);
     if (user == null) {
       respM.Data = null;
-      respM.Message = 'El usuario enviado no se registra';
+      respM.Message =
+        this.ControllerContext + 'Submitted user does not register';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     } else {
@@ -183,7 +192,8 @@ export class UsersService {
       return user;
     } else {
       respM.Data = null;
-      respM.Message = 'El usuario enviado no se registra';
+      respM.Message =
+        this.ControllerContext + 'Submitted user does not register';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
@@ -201,7 +211,8 @@ export class UsersService {
       return user;
     } else {
       respM.Data = null;
-      respM.Message = 'El usuario enviado no se registra';
+      respM.Message =
+        this.ControllerContext + 'Submitted user does not register';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
@@ -218,7 +229,8 @@ export class UsersService {
       return user;
     } else {
       respM.Data = null;
-      respM.Message = 'El usuario enviado no se registra';
+      respM.Message =
+        this.ControllerContext + 'Submitted user does not register';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }

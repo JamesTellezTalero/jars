@@ -18,6 +18,8 @@ export class JarsService {
     private readonly GeneralModuleS: GeneralModuleService,
   ) {}
 
+  private readonly ControllerContext = 'Jars: ';
+
   private readonly InitJarsData: JarsDto[] = [
     { color: 'Morado', name: 'Necessities', percent: 55, userId: 0 },
     { color: 'Azul', name: 'Education', percent: 10, userId: 0 },
@@ -41,7 +43,8 @@ export class JarsService {
       }
     } else {
       respM.Data = null;
-      respM.Message = 'El usuario ya registra Jars';
+      respM.Message =
+        this.ControllerContext + 'The user already registers Jars';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
@@ -62,7 +65,9 @@ export class JarsService {
       return await this.JarsRepo.save(newJar);
     } else {
       respM.Data = null;
-      respM.Message = 'El Usuario enviado no se registra o es invalido.';
+      respM.Message =
+        this.ControllerContext +
+        'The User sent is not registered or is invalid.';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
@@ -73,7 +78,9 @@ export class JarsService {
     const existJar = await this.GetById(Number(id));
     if (existJar == null) {
       respM.Data = null;
-      respM.Message = 'El Jar enviado no se registra o es invalido.';
+      respM.Message =
+        this.ControllerContext +
+        'The sent Jar is not registered or is invalid.';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     } else {
@@ -105,7 +112,9 @@ export class JarsService {
     const existJar = await this.GetById(Number(id));
     if (existJar == null) {
       respM.Data = null;
-      respM.Message = 'El Jar enviado no se registra o es invalido.';
+      respM.Message =
+        this.ControllerContext +
+        'The sent Jar is not registered or is invalid.';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     } else {
@@ -129,7 +138,8 @@ export class JarsService {
         return true;
       } else {
         respM.Data = null;
-        respM.Message = 'El porcentaje total excede el permitido.';
+        respM.Message =
+          this.ControllerContext + 'The total percentage exceeds that allowed.';
         respM.StatusCode = HttpStatus.FORBIDDEN;
         throw new HttpException(respM, HttpStatus.FORBIDDEN);
       }

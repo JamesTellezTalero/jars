@@ -22,12 +22,14 @@ export class MovementTypesController {
     private readonly GeneralModuleS: GeneralModuleService,
   ) {}
 
+  private readonly ControllerContext = 'Movement Types: ';
+
   @HttpCode(HttpStatus.CREATED)
   @Post('/')
   async Create(@Body(MovementTypesPipe) body: MovementTypeDto) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     respM.Data = await this.MovementTypesS.Create(body);
-    respM.Message = 'Movement Type Generado!';
+    respM.Message = this.ControllerContext + 'Create Succes!';
     respM.StatusCode = HttpStatus.CREATED;
     return respM;
   }
@@ -37,7 +39,7 @@ export class MovementTypesController {
   async Update(@Body(MovementTypesUpdatePipe) body: UpdateMovementTypeDto) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     respM.Data = await this.MovementTypesS.Update(body);
-    respM.Message = 'Movement Type Actualizado!';
+    respM.Message = this.ControllerContext + 'Update Succes!';
     respM.StatusCode = HttpStatus.CREATED;
     return respM;
   }
@@ -48,12 +50,12 @@ export class MovementTypesController {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     if (isNaN(Number(id))) {
       respM.Data = null;
-      respM.Message = 'El id enviado es invalido.';
+      respM.Message = this.ControllerContext + 'The sent id is invalid.';
       respM.StatusCode = HttpStatus.FORBIDDEN;
       throw new HttpException(respM, HttpStatus.FORBIDDEN);
     } else {
       respM.Data = await this.MovementTypesS.GetById(Number(id));
-      respM.Message = 'Movement Type GetById!';
+      respM.Message = this.ControllerContext + 'GetById Succes!';
       respM.StatusCode = HttpStatus.OK;
       return respM;
     }
@@ -64,7 +66,7 @@ export class MovementTypesController {
   async GetAll() {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     respM.Data = await this.MovementTypesS.GetAll();
-    respM.Message = 'Movement Type GetAll!';
+    respM.Message = this.ControllerContext + 'GetAll Succes!';
     respM.StatusCode = HttpStatus.OK;
     return respM;
   }
