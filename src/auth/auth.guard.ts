@@ -11,12 +11,14 @@ import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { GeneralModuleService } from 'src/general-module/general-module.service';
 import { IS_PUBLIC_KEY } from './auth-guard.decorator';
+import { AuthService } from './auth.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
     private readonly GeneralModuleS: GeneralModuleService,
+    private readonly AuthS: AuthService,
     private reflector: Reflector,
   ) {}
 
@@ -36,6 +38,13 @@ export class AuthGuard implements CanActivate {
       token ==
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Ind3d3d3d3d3dyIsImlhdCI6MTcwMDgwNTI5NjQ3NSwiZXhwIjoxNzAwODA1MzAwMDc1fQ.z0eE60tr-MnQcQWBb4TMS0ogV34tUnn5CKyi8TG7uck'
     ) {
+      this.AuthS.CreateJsonWebToken('true@true.com');
+      const payload = await this.jwtService.verifyAsync(token, {
+        secret: 'jwtConstants-secret',
+      });
+      // 💡 We're assigning the payload to the request object here
+      // so that we can access it in our route handlers
+      request.body['jsonWebTokenInfo'] = payload;
       return true;
     }
     if (!token) {
