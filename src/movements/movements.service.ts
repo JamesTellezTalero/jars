@@ -99,6 +99,43 @@ export class MovementsService {
         movement.createdAt = new Date();
         movement.updatedAt = new Date();
         return await this.MovementsRepo.save(movement);
+      } else if (MovementType.name == 'OutCome') {
+        let user = await this.UsersS.GetByEmail(
+          movementsDto.jsonWebTokenInfo.email,
+        );
+        if (user == null) {
+          respM.Data = null;
+          respM.Message =
+            this.ControllerContext + 'Submitted user does not register';
+          respM.StatusCode = HttpStatus.NOT_FOUND;
+          throw new HttpException(respM, HttpStatus.NOT_FOUND);
+        }
+        let senderJar = await this.JarsS.GetById(movementsDto?.senderJar);
+        if (senderJar == null) {
+          respM.Data = null;
+          respM.Message =
+            this.ControllerContext + 'senderJar is not registered.';
+          respM.StatusCode = HttpStatus.NOT_FOUND;
+          throw new HttpException(respM, HttpStatus.NOT_FOUND);
+        }
+        let senderJarExist = user.jars.find((e) => e.id == senderJar.id);
+        if (senderJarExist == null) {
+          respM.Data = null;
+          respM.Message =
+            this.ControllerContext +
+            'senderJar does not belong to the user sent.';
+          respM.StatusCode = HttpStatus.NOT_FOUND;
+          throw new HttpException(respM, HttpStatus.NOT_FOUND);
+        }
+        let movement = new Movements();
+        movement.title = movementsDto.title;
+        movement.desc = movementsDto?.desc || '';
+        movement.amount = movementsDto?.amount;
+        movement.senderJar = senderJar;
+        movement.movementType = MovementType;
+        movement.createdAt = new Date();
+        movement.updatedAt = new Date();
+        return await this.MovementsRepo.save(movement);
       } else {
         const movement = new Movements();
 
