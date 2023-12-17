@@ -38,6 +38,7 @@ export class MovementsService {
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     } else {
+      /////////CREAR UNA FUNCION PARA DIVIDIR ESTO CON UN INTERCEPTOR
       if (MovementType.name == 'GeneralInCome') {
         let user = await this.UsersS.GetByEmail(
           movementsDto.jsonWebTokenInfo.email,
@@ -61,6 +62,43 @@ export class MovementsService {
           return movement;
         });
         return await this.MovementsRepo.save(movements);
+      } else if (MovementType.name == 'EspecificInCome') {
+        let user = await this.UsersS.GetByEmail(
+          movementsDto.jsonWebTokenInfo.email,
+        );
+        if (user == null) {
+          respM.Data = null;
+          respM.Message =
+            this.ControllerContext + 'Submitted user does not register';
+          respM.StatusCode = HttpStatus.NOT_FOUND;
+          throw new HttpException(respM, HttpStatus.NOT_FOUND);
+        }
+        let receiverJar = await this.JarsS.GetById(movementsDto?.receiverJar);
+        if (receiverJar == null) {
+          respM.Data = null;
+          respM.Message =
+            this.ControllerContext + 'receiverJar is not registered.';
+          respM.StatusCode = HttpStatus.NOT_FOUND;
+          throw new HttpException(respM, HttpStatus.NOT_FOUND);
+        }
+        let receiverJarExist = user.jars.find((e) => e.id == receiverJar.id);
+        if (receiverJarExist == null) {
+          respM.Data = null;
+          respM.Message =
+            this.ControllerContext +
+            'receiverJar does not belong to the user sent.';
+          respM.StatusCode = HttpStatus.NOT_FOUND;
+          throw new HttpException(respM, HttpStatus.NOT_FOUND);
+        }
+        let movement = new Movements();
+        movement.title = movementsDto.title;
+        movement.desc = movementsDto?.desc || '';
+        movement.amount = movementsDto?.amount;
+        movement.receiverJar = receiverJar;
+        movement.movementType = MovementType;
+        movement.createdAt = new Date();
+        movement.updatedAt = new Date();
+        return await this.MovementsRepo.save(movement);
       } else {
         const movement = new Movements();
 
