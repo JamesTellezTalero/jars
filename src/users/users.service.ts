@@ -187,6 +187,7 @@ export class UsersService {
       where: {
         email,
       },
+      relations: ['jars'],
     });
     if (user != null) {
       return user;

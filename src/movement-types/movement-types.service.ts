@@ -45,6 +45,7 @@ export class MovementTypesService {
   }
 
   async GetById(id: number) {
-    return this.MovementTypesRepo.findOne({ where: { id } });
+    let data = await this.MovementTypesRepo.findOne({ where: { id: id } });
+    return data;
   }
 }

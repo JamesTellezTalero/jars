@@ -12,6 +12,12 @@ import { MovementsDto } from 'src/movements/movements.dto';
 export class MovementsPipe implements PipeTransform {
   transform(movement: MovementsDto, metadata: ArgumentMetadata) {
     const ApiResponseM = new ApiResponseModel();
+    if (movement.movementType == null || isNaN(movement.movementType)) {
+      ApiResponseM.Data = null;
+      ApiResponseM.Message = 'No se registra la movementType.';
+      ApiResponseM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(ApiResponseM, HttpStatus.NOT_FOUND);
+    }
     if (movement.title == null) {
       ApiResponseM.Data = null;
       ApiResponseM.StatusCode = HttpStatus.FORBIDDEN;

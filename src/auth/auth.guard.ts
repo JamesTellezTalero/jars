@@ -33,12 +33,13 @@ export class AuthGuard implements CanActivate {
       return true;
     }
     const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(request);
+    let token = this.extractTokenFromHeader(request);
     if (
       token ==
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Ind3d3d3d3d3dyIsImlhdCI6MTcwMDgwNTI5NjQ3NSwiZXhwIjoxNzAwODA1MzAwMDc1fQ.z0eE60tr-MnQcQWBb4TMS0ogV34tUnn5CKyi8TG7uck'
     ) {
-      this.AuthS.CreateJsonWebToken('true@true.com');
+      token = (await this.AuthS.CreateJsonWebToken('true@true.com'))
+        .access_token;
       const payload = await this.jwtService.verifyAsync(token, {
         secret: 'jwtConstants-secret',
       });

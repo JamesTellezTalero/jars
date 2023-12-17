@@ -6,6 +6,7 @@ import { MovementTypesService } from 'src/movement-types/movement-types.service'
 import { Repository } from 'typeorm';
 import { MovementsDto, UpdateMovementsDto } from './movements.dto';
 import { GeneralModuleService } from 'src/general-module/general-module.service';
+import { UsersService } from 'src/users/users.service';
 
 // import { InjectModel } from '@nestjs/mongoose';
 // import { Movements } from './movements.entities';
@@ -18,29 +19,80 @@ export class MovementsService {
     private readonly MovementsRepo: Repository<Movements>,
 
     private readonly JarsS: JarsService,
+    private readonly UsersS: UsersService,
     private readonly MovementsTypesS: MovementTypesService,
     private readonly GeneralModuleS: GeneralModuleService,
   ) {}
   private readonly ControllerContext = 'Movements: ';
 
-  async testCreateRecord() {
-    const movement = new Movements();
+  async Create(movementsDto: MovementsDto): Promise<Movements | Movements[]> {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
 
-    movement.title = 'string';
-    movement.desc = 'string';
-    movement.amount = 222;
-    movement.senderJar = (await this.JarsS.GetUserById(1))[0];
-    movement.receiverJar = (await this.JarsS.GetUserById(1))[0];
-    movement.movementType = await this.MovementsTypesS.GetById(1);
-    // movement.tag = 'string';
-    movement.desc = 'string';
-    movement.createdAt = new Date();
-    movement.updatedAt = new Date();
+    const MovementType = await this.MovementsTypesS.GetById(
+      Number(movementsDto.movementType),
+    );
+    if (MovementType == null) {
+      respM.Data = null;
+      respM.Message =
+        this.ControllerContext + 'movementType is not registered.';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    } else {
+      if (MovementType.name == 'GeneralInCome') {
+        let user = await this.UsersS.GetByEmail(
+          movementsDto.jsonWebTokenInfo.email,
+        );
+        if (user == null) {
+          respM.Data = null;
+          respM.Message =
+            this.ControllerContext + 'Submitted user does not register';
+          respM.StatusCode = HttpStatus.NOT_FOUND;
+          throw new HttpException(respM, HttpStatus.NOT_FOUND);
+        }
+        let movements = user?.jars.map((e) => {
+          let movement = new Movements();
+          movement.title = movementsDto.title;
+          movement.desc = movementsDto?.desc || '';
+          movement.amount = (e?.percent * movementsDto?.amount) / 100;
+          movement.receiverJar = e;
+          movement.movementType = MovementType;
+          movement.createdAt = new Date();
+          movement.updatedAt = new Date();
+          return movement;
+        });
+        return await this.MovementsRepo.save(movements);
+      } else {
+        const movement = new Movements();
 
-    return await this.MovementsRepo.save(movement);
+        movement.title = movementsDto.title;
+        movement.desc = movementsDto?.desc || '';
+        movement.amount = movementsDto?.amount;
+        movement.senderJar =
+          (await this.JarsS.GetById(movementsDto.senderJar)) || null;
+        movement.receiverJar =
+          (await this.JarsS.GetById(movementsDto.receiverJar)) || null;
+        if (movement.senderJar == null) {
+          respM.Data = null;
+          respM.Message =
+            this.ControllerContext + 'senderJar is not registered.';
+          respM.StatusCode = HttpStatus.NOT_FOUND;
+          throw new HttpException(respM, HttpStatus.NOT_FOUND);
+        } else if (movement.receiverJar == null) {
+          respM.Data = null;
+          respM.Message =
+            this.ControllerContext + 'receiverJar is not registered.';
+          respM.StatusCode = HttpStatus.NOT_FOUND;
+          throw new HttpException(respM, HttpStatus.NOT_FOUND);
+        }
+        // movement.tag = 'string';
+        movement.createdAt = new Date();
+        movement.updatedAt = new Date();
+        return await this.MovementsRepo.save(movement);
+      }
+    }
   }
 
-  async Create(movementsDto: MovementsDto): Promise<Movements> {
+  async CreateGeneralIncome(movementsDto: MovementsDto): Promise<Movements> {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     const movement = new Movements();
 
@@ -74,7 +126,6 @@ export class MovementsService {
     // movement.tag = 'string';
     movement.createdAt = new Date();
     movement.updatedAt = new Date();
-
     return await this.MovementsRepo.save(movement);
   }
 
