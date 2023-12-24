@@ -82,6 +82,59 @@ export class JarsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @Get('/movements/:id')
+  async GetJarMovementsById(@Param('id') id: string) {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    if (isNaN(Number(id))) {
+      respM.Data = null;
+      respM.Message = this.ControllerContext + 'The sent id is invalid.';
+      respM.StatusCode = HttpStatus.FORBIDDEN;
+      throw new HttpException(respM, HttpStatus.FORBIDDEN);
+    } else {
+      respM.Data = await this.JarsS.GetJarMovementsById(Number(id));
+      respM.Message = this.ControllerContext + 'GetJarMovementsById Success!';
+      respM.StatusCode = HttpStatus.OK;
+      return respM;
+    }
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/receiber-movements/:id')
+  async GetReceiberMovementsByJarId(@Param('id') id: string) {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    if (isNaN(Number(id))) {
+      respM.Data = null;
+      respM.Message = this.ControllerContext + 'The sent id is invalid.';
+      respM.StatusCode = HttpStatus.FORBIDDEN;
+      throw new HttpException(respM, HttpStatus.FORBIDDEN);
+    } else {
+      respM.Data = await this.JarsS.GetReceiberMovementsByJarId(Number(id));
+      respM.Message =
+        this.ControllerContext + 'GetReceiberMovementsByJarId Success!';
+      respM.StatusCode = HttpStatus.OK;
+      return respM;
+    }
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('/sender-movements/:id')
+  async GetSenderMovementsByJarId(@Param('id') id: string) {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    if (isNaN(Number(id))) {
+      respM.Data = null;
+      respM.Message = this.ControllerContext + 'The sent id is invalid.';
+      respM.StatusCode = HttpStatus.FORBIDDEN;
+      throw new HttpException(respM, HttpStatus.FORBIDDEN);
+    } else {
+      respM.Data = await this.JarsS.GetSenderMovementsByJarId(Number(id));
+      respM.Message =
+        this.ControllerContext + 'GetSenderMovementsByJarId Success!';
+      respM.StatusCode = HttpStatus.OK;
+      return respM;
+    }
+  }
+
+  @HttpCode(HttpStatus.OK)
   @Get('/user/:id')
   async GetByUserId(@Param('id') id: string) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();

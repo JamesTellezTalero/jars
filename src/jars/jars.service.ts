@@ -93,6 +93,27 @@ export class JarsService {
     }
   }
 
+  async GetJarMovementsById(id: number): Promise<Jars> {
+    return this.JarsRepo.findOne({
+      where: { id },
+      relations: ['incomeMovements', 'outcomeMovements'],
+    });
+  }
+
+  async GetReceiberMovementsByJarId(id: number): Promise<Jars> {
+    return this.JarsRepo.findOne({
+      where: { id },
+      relations: ['incomeMovements'],
+    });
+  }
+
+  async GetSenderMovementsByJarId(id: number): Promise<Jars> {
+    return this.JarsRepo.findOne({
+      where: { id },
+      relations: ['outcomeMovements'],
+    });
+  }
+
   async GetById(id: number): Promise<Jars> {
     return this.JarsRepo.findOne({ where: { id } });
   }
