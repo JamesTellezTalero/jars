@@ -84,10 +84,9 @@ export class JarsService {
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     } else {
-      existJar.name = jar.name != existJar.name ? jar.name : existJar.name;
-      existJar.color = jar.color != existJar.color ? jar.color : existJar.color;
-      existJar.percent =
-        jar.percent != existJar.percent ? jar.percent : existJar.percent;
+      existJar.name = jar.name || existJar.name;
+      existJar.color = jar.color || existJar.color;
+      existJar.percent = jar.percent || existJar.percent;
       existJar.updatedAt = new Date();
       return await this.JarsRepo.save(existJar);
     }
