@@ -8,6 +8,8 @@ import {
   Param,
   Post,
   Put,
+  Res,
+  UseInterceptors,
 } from '@nestjs/common';
 import { MovementsService } from './movements.service';
 import { MovementsDto, UpdateMovementsDto } from './movements.dto';

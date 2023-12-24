@@ -242,4 +242,18 @@ export class UsersService {
     encryptedPassword = encryptedPassword.toString(crypto.enc.Base64);
     return encryptedPassword;
   }
+
+  async ValidarUserByEmail(email: string) {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    let user = await this.GetByEmail(email);
+    if (user == null) {
+      respM.Data = null;
+      respM.Message =
+        this.ControllerContext + 'Submitted user does not register';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    } else {
+      return user;
+    }
+  }
 }

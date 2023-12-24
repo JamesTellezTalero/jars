@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 import { MovementsDto, UpdateMovementsDto } from './movements.dto';
 import { GeneralModuleService } from 'src/general-module/general-module.service';
 import { UsersService } from 'src/users/users.service';
+import { MovementTypes } from 'src/database/entities/MovementTypes';
 
 // import { InjectModel } from '@nestjs/mongoose';
 // import { Movements } from './movements.entities';
@@ -26,262 +27,190 @@ export class MovementsService {
   private readonly ControllerContext = 'Movements: ';
 
   async Create(movementsDto: MovementsDto): Promise<Movements | Movements[]> {
-    const respM = await this.GeneralModuleS.GetApiResponseModel();
-
     const MovementType = await this.MovementsTypesS.GetById(
       Number(movementsDto.movementType),
     );
-    if (MovementType == null) {
-      respM.Data = null;
-      respM.Message =
-        this.ControllerContext + 'movementType is not registered.';
-      respM.StatusCode = HttpStatus.NOT_FOUND;
-      throw new HttpException(respM, HttpStatus.NOT_FOUND);
-    } else {
-      /////////CREAR UNA FUNCION PARA DIVIDIR ESTO CON UN INTERCEPTOR
-      const movement = new Movements();
-      movement.title = movementsDto.title;
-      movement.desc = movementsDto?.desc || '';
-      movement.amount = movementsDto?.amount;
-      movement.senderJar =
-        (await this.JarsS.GetById(movementsDto.senderJar)) || null;
-      movement.receiverJar =
-        (await this.JarsS.GetById(movementsDto.receiverJar)) || null;
-      if (movement.senderJar == null) {
-        respM.Data = null;
-        respM.Message = this.ControllerContext + 'senderJar is not registered.';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      } else if (movement.receiverJar == null) {
-        respM.Data = null;
-        respM.Message =
-          this.ControllerContext + 'receiverJar is not registered.';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      }
-      // movement.tag = 'string';
-      movement.createdAt = new Date();
-      movement.updatedAt = new Date();
-      return await this.MovementsRepo.save(movement);
+
+    switch (MovementType.name) {
+      case 'GeneralInCome':
+        return await this.CreateGeneralInCome(movementsDto, MovementType);
+      case 'OutCome':
+        return await this.CreateOutCome(movementsDto, MovementType);
+      case 'JarMove':
+        return await this.CreatJarMove(movementsDto, MovementType);
+      case 'EspecificInCome':
+        return await this.CreateEspecificInCome(movementsDto, MovementType);
+      default:
+        return await this.CreateDefaultIncome(movementsDto);
     }
+  }
+  async CreateDefaultIncome(
+    movementsDto: MovementsDto,
+  ): Promise<Movements | Movements[]> {
+    /////////CREAR UNA FUNCION PARA DIVIDIR ESTO CON UN INTERCEPTOR
+    const movement = new Movements();
+    movement.title = movementsDto.title;
+    movement.desc = movementsDto?.desc || '';
+    movement.amount = movementsDto?.amount;
+    movement.senderJar =
+      (await this.JarsS.GetById(movementsDto.senderJar)) || null;
+    movement.receiverJar =
+      (await this.JarsS.GetById(movementsDto.receiverJar)) || null;
+    // movement.tag = 'string';
+    movement.createdAt = new Date();
+    movement.updatedAt = new Date();
+    return await this.MovementsRepo.save(movement);
   }
 
   async CreateGeneralInCome(
     movementsDto: MovementsDto,
+    MovementType: MovementTypes,
   ): Promise<Movements | Movements[]> {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
 
-    const MovementType = await this.MovementsTypesS.GetById(
-      Number(movementsDto.movementType),
+    let user = await this.UsersS.ValidarUserByEmail(
+      movementsDto.jsonWebTokenInfo.email,
     );
-    if (MovementType == null) {
+    if (user == null) {
       respM.Data = null;
       respM.Message =
-        this.ControllerContext + 'movementType is not registered.';
+        this.ControllerContext + 'Submitted user does not register';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
-    } else {
-      let user = await this.UsersS.GetByEmail(
-        movementsDto.jsonWebTokenInfo.email,
-      );
-      if (user == null) {
-        respM.Data = null;
-        respM.Message =
-          this.ControllerContext + 'Submitted user does not register';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      }
-      let movements = user?.jars.map((e) => {
-        let movement = new Movements();
-        movement.title = movementsDto.title;
-        movement.desc = movementsDto?.desc || '';
-        movement.amount = (e?.percent * movementsDto?.amount) / 100;
-        movement.receiverJar = e;
-        movement.movementType = MovementType;
-        movement.createdAt = new Date();
-        movement.updatedAt = new Date();
-        return movement;
-      });
-      return await this.MovementsRepo.save(movements);
     }
+    let movements = user?.jars.map((e) => {
+      let movement = new Movements();
+      movement.title = movementsDto.title;
+      movement.desc = movementsDto?.desc || '';
+      movement.amount = (e?.percent * movementsDto?.amount) / 100;
+      movement.receiverJar = e;
+      movement.movementType = MovementType;
+      movement.createdAt = new Date();
+      movement.updatedAt = new Date();
+      return movement;
+    });
+    return await this.MovementsRepo.save(movements);
   }
 
   async CreateEspecificInCome(
     movementsDto: MovementsDto,
+    MovementType: MovementTypes,
   ): Promise<Movements | Movements[]> {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
 
-    const MovementType = await this.MovementsTypesS.GetById(
-      Number(movementsDto.movementType),
+    let user = await this.UsersS.ValidarUserByEmail(
+      movementsDto.jsonWebTokenInfo.email,
     );
-    if (MovementType == null) {
+    let receiverJar = await this.JarsS.GetById(movementsDto?.receiverJar);
+    if (receiverJar == null) {
       respM.Data = null;
-      respM.Message =
-        this.ControllerContext + 'movementType is not registered.';
+      respM.Message = this.ControllerContext + 'receiverJar is not registered.';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
-    } else {
-      let user = await this.UsersS.GetByEmail(
-        movementsDto.jsonWebTokenInfo.email,
-      );
-      if (user == null) {
-        respM.Data = null;
-        respM.Message =
-          this.ControllerContext + 'Submitted user does not register';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      }
-      let receiverJar = await this.JarsS.GetById(movementsDto?.receiverJar);
-      if (receiverJar == null) {
-        respM.Data = null;
-        respM.Message =
-          this.ControllerContext + 'receiverJar is not registered.';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      }
-      let receiverJarExist = user.jars.find((e) => e.id == receiverJar.id);
-      if (receiverJarExist == null) {
-        respM.Data = null;
-        respM.Message =
-          this.ControllerContext +
-          'receiverJar does not belong to the user sent.';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      }
-      let movement = new Movements();
-      movement.title = movementsDto.title;
-      movement.desc = movementsDto?.desc || '';
-      movement.amount = movementsDto?.amount;
-      movement.receiverJar = receiverJar;
-      movement.movementType = MovementType;
-      movement.createdAt = new Date();
-      movement.updatedAt = new Date();
-      return await this.MovementsRepo.save(movement);
     }
+    let receiverJarExist = user.jars.find((e) => e.id == receiverJar.id);
+    if (receiverJarExist == null) {
+      respM.Data = null;
+      respM.Message =
+        this.ControllerContext +
+        'receiverJar does not belong to the user sent.';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
+    let movement = new Movements();
+    movement.title = movementsDto.title;
+    movement.desc = movementsDto?.desc || '';
+    movement.amount = movementsDto?.amount;
+    movement.receiverJar = receiverJar;
+    movement.movementType = MovementType;
+    movement.createdAt = new Date();
+    movement.updatedAt = new Date();
+    return await this.MovementsRepo.save(movement);
   }
 
   async CreateOutCome(
     movementsDto: MovementsDto,
+    MovementType: MovementTypes,
   ): Promise<Movements | Movements[]> {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
-
-    const MovementType = await this.MovementsTypesS.GetById(
-      Number(movementsDto.movementType),
+    let user = await this.UsersS.ValidarUserByEmail(
+      movementsDto.jsonWebTokenInfo.email,
     );
-    if (MovementType == null) {
+    let senderJar = await this.JarsS.GetById(movementsDto?.senderJar);
+    if (senderJar == null) {
       respM.Data = null;
-      respM.Message =
-        this.ControllerContext + 'movementType is not registered.';
+      respM.Message = this.ControllerContext + 'senderJar is not registered.';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
-    } else {
-      let user = await this.UsersS.GetByEmail(
-        movementsDto.jsonWebTokenInfo.email,
-      );
-      if (user == null) {
-        respM.Data = null;
-        respM.Message =
-          this.ControllerContext + 'Submitted user does not register';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      }
-      let senderJar = await this.JarsS.GetById(movementsDto?.senderJar);
-      if (senderJar == null) {
-        respM.Data = null;
-        respM.Message = this.ControllerContext + 'senderJar is not registered.';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      }
-      let senderJarExist = user.jars.find((e) => e.id == senderJar.id);
-      if (senderJarExist == null) {
-        respM.Data = null;
-        respM.Message =
-          this.ControllerContext +
-          'senderJar does not belong to the user sent.';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      }
-      let movement = new Movements();
-      movement.title = movementsDto.title;
-      movement.desc = movementsDto?.desc || '';
-      movement.amount = movementsDto?.amount;
-      movement.senderJar = senderJar;
-      movement.movementType = MovementType;
-      movement.createdAt = new Date();
-      movement.updatedAt = new Date();
-      return await this.MovementsRepo.save(movement);
     }
+    let senderJarExist = user.jars.find((e) => e.id == senderJar.id);
+    if (senderJarExist == null) {
+      respM.Data = null;
+      respM.Message =
+        this.ControllerContext + 'senderJar does not belong to the user sent.';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
+    let movement = new Movements();
+    movement.title = movementsDto.title;
+    movement.desc = movementsDto?.desc || '';
+    movement.amount = movementsDto?.amount;
+    movement.senderJar = senderJar;
+    movement.movementType = MovementType;
+    movement.createdAt = new Date();
+    movement.updatedAt = new Date();
+    return await this.MovementsRepo.save(movement);
   }
 
   async CreatJarMove(
     movementsDto: MovementsDto,
+    MovementType: MovementTypes,
   ): Promise<Movements | Movements[]> {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
-
-    const MovementType = await this.MovementsTypesS.GetById(
-      Number(movementsDto.movementType),
+    let user = await this.UsersS.ValidarUserByEmail(
+      movementsDto.jsonWebTokenInfo.email,
     );
-    if (MovementType == null) {
+    let senderJar = await this.JarsS.GetById(movementsDto?.senderJar);
+    if (senderJar == null) {
       respM.Data = null;
-      respM.Message =
-        this.ControllerContext + 'movementType is not registered.';
+      respM.Message = this.ControllerContext + 'senderJar is not registered.';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
-    } else {
-      let user = await this.UsersS.GetByEmail(
-        movementsDto.jsonWebTokenInfo.email,
-      );
-      if (user == null) {
-        respM.Data = null;
-        respM.Message =
-          this.ControllerContext + 'Submitted user does not register';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      }
-      let senderJar = await this.JarsS.GetById(movementsDto?.senderJar);
-      if (senderJar == null) {
-        respM.Data = null;
-        respM.Message = this.ControllerContext + 'senderJar is not registered.';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      }
-      let senderJarExist = user.jars.find((e) => e.id == senderJar.id);
-      if (senderJarExist == null) {
-        respM.Data = null;
-        respM.Message =
-          this.ControllerContext +
-          'senderJar does not belong to the user sent.';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      }
-      let receiverJar = await this.JarsS.GetById(movementsDto?.receiverJar);
-      if (receiverJar == null) {
-        respM.Data = null;
-        respM.Message =
-          this.ControllerContext + 'receiverJar is not registered.';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      }
-      let receiverJarExist = user.jars.find((e) => e.id == receiverJar.id);
-      if (receiverJarExist == null) {
-        respM.Data = null;
-        respM.Message =
-          this.ControllerContext +
-          'receiverJar does not belong to the user sent.';
-        respM.StatusCode = HttpStatus.NOT_FOUND;
-        throw new HttpException(respM, HttpStatus.NOT_FOUND);
-      }
-      let movement = new Movements();
-      movement.title = movementsDto.title;
-      movement.desc = movementsDto?.desc || '';
-      movement.amount = movementsDto?.amount;
-      movement.senderJar = senderJar;
-      movement.receiverJar = receiverJar;
-      movement.movementType = MovementType;
-      movement.createdAt = new Date();
-      movement.updatedAt = new Date();
-      return await this.MovementsRepo.save(movement);
     }
+    let senderJarExist = user.jars.find((e) => e.id == senderJar.id);
+    if (senderJarExist == null) {
+      respM.Data = null;
+      respM.Message =
+        this.ControllerContext + 'senderJar does not belong to the user sent.';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
+    let receiverJar = await this.JarsS.GetById(movementsDto?.receiverJar);
+    if (receiverJar == null) {
+      respM.Data = null;
+      respM.Message = this.ControllerContext + 'receiverJar is not registered.';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
+    let receiverJarExist = user.jars.find((e) => e.id == receiverJar.id);
+    if (receiverJarExist == null) {
+      respM.Data = null;
+      respM.Message =
+        this.ControllerContext +
+        'receiverJar does not belong to the user sent.';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
+    let movement = new Movements();
+    movement.title = movementsDto.title;
+    movement.desc = movementsDto?.desc || '';
+    movement.amount = movementsDto?.amount;
+    movement.senderJar = senderJar;
+    movement.receiverJar = receiverJar;
+    movement.movementType = MovementType;
+    movement.createdAt = new Date();
+    movement.updatedAt = new Date();
+    return await this.MovementsRepo.save(movement);
   }
 
   async Update(movementsDto: UpdateMovementsDto): Promise<Movements> {

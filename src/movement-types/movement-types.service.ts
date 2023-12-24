@@ -45,7 +45,16 @@ export class MovementTypesService {
   }
 
   async GetById(id: number) {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
     let data = await this.MovementTypesRepo.findOne({ where: { id: id } });
-    return data;
+    if (data == null) {
+      respM.Data = null;
+      respM.Message =
+        this.ControllerContext + 'movementType is not registered.';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    } else {
+      return data;
+    }
   }
 }
