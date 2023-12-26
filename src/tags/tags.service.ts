@@ -17,15 +17,6 @@ export class TagsService {
 
   private readonly ControllerContext = 'Tags: ';
 
-  async testCreateRecord() {
-    const tag = new Tags();
-    tag.name = 'string';
-    tag.user = await this.UsersS.GetUserById(2);
-    tag.createdAt = new Date();
-    tag.updatedAt = new Date();
-    return tag;
-  }
-
   async Create(tag: TagsDto) {
     let newTag = new Tags();
     newTag.name = tag.name;
@@ -60,6 +51,30 @@ export class TagsService {
         id,
       },
     });
+  }
+  async ValidateByIdWithUserEmail(id: number, email: string) {
+    let respM = await this.GeneralModuleS.GetApiResponseModel();
+    let user = await this.UsersS.GetByEmail(email);
+    let tag = await this.TagsRepo.findOne({
+      where: {
+        id,
+      },
+      relations: ['user'],
+    });
+    if (tag == null) {
+      respM.Data = null;
+      respM.Message =
+        this.ControllerContext + 'Submitted tag does not register';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    } else if (tag.user.id != user.id) {
+      respM.Data = null;
+      respM.Message =
+        this.ControllerContext + 'Submitted tag does not belong to sended user';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
+    return tag;
   }
 
   async GetAll() {

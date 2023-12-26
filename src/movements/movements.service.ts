@@ -8,6 +8,7 @@ import { MovementsDto, UpdateMovementsDto } from './movements.dto';
 import { GeneralModuleService } from 'src/general-module/general-module.service';
 import { UsersService } from 'src/users/users.service';
 import { MovementTypes } from 'src/database/entities/MovementTypes';
+import { TagsService } from 'src/tags/tags.service';
 
 // import { InjectModel } from '@nestjs/mongoose';
 // import { Movements } from './movements.entities';
@@ -20,6 +21,7 @@ export class MovementsService {
     private readonly MovementsRepo: Repository<Movements>,
 
     private readonly JarsS: JarsService,
+    private readonly TagsS: TagsService,
     private readonly UsersS: UsersService,
     private readonly MovementsTypesS: MovementTypesService,
     private readonly GeneralModuleS: GeneralModuleService,
@@ -52,11 +54,17 @@ export class MovementsService {
     movement.title = movementsDto.title;
     movement.desc = movementsDto?.desc || '';
     movement.amount = movementsDto?.amount;
+    movement.tag =
+      movementsDto?.tagid != null
+        ? await this.TagsS.ValidateByIdWithUserEmail(
+            movementsDto.tagid,
+            movementsDto.jsonWebTokenInfo.email,
+          )
+        : null;
     movement.senderJar =
       (await this.JarsS.GetById(movementsDto.senderJar)) || null;
     movement.receiverJar =
       (await this.JarsS.GetById(movementsDto.receiverJar)) || null;
-    // movement.tag = 'string';
     movement.createdAt = new Date();
     movement.updatedAt = new Date();
     return await this.MovementsRepo.save(movement);
@@ -123,6 +131,13 @@ export class MovementsService {
     movement.amount = movementsDto?.amount;
     movement.receiverJar = receiverJar;
     movement.movementType = MovementType;
+    movement.tag =
+      movementsDto?.tagid != null
+        ? await this.TagsS.ValidateByIdWithUserEmail(
+            movementsDto.tagid,
+            movementsDto.jsonWebTokenInfo.email,
+          )
+        : null;
     movement.createdAt = new Date();
     movement.updatedAt = new Date();
     return await this.MovementsRepo.save(movement);
@@ -157,6 +172,13 @@ export class MovementsService {
     movement.amount = movementsDto?.amount;
     movement.senderJar = senderJar;
     movement.movementType = MovementType;
+    movement.tag =
+      movementsDto?.tagid != null
+        ? await this.TagsS.ValidateByIdWithUserEmail(
+            movementsDto.tagid,
+            movementsDto.jsonWebTokenInfo.email,
+          )
+        : null;
     movement.createdAt = new Date();
     movement.updatedAt = new Date();
     return await this.MovementsRepo.save(movement);
@@ -208,6 +230,13 @@ export class MovementsService {
     movement.senderJar = senderJar;
     movement.receiverJar = receiverJar;
     movement.movementType = MovementType;
+    movement.tag =
+      movementsDto?.tagid != null
+        ? await this.TagsS.ValidateByIdWithUserEmail(
+            movementsDto.tagid,
+            movementsDto.jsonWebTokenInfo.email,
+          )
+        : null;
     movement.createdAt = new Date();
     movement.updatedAt = new Date();
     return await this.MovementsRepo.save(movement);
@@ -225,6 +254,13 @@ export class MovementsService {
     movement.title = movementsDto.title;
     movement.desc = movementsDto?.desc || '';
     movement.amount = movementsDto?.amount;
+    movement.tag =
+      movementsDto?.tagid != null
+        ? await this.TagsS.ValidateByIdWithUserEmail(
+            movementsDto.tagid,
+            movementsDto.jsonWebTokenInfo.email,
+          )
+        : null;
     movement.senderJar =
       (await this.JarsS.GetById(movementsDto.senderJar)) || null;
     movement.receiverJar =
@@ -259,30 +295,9 @@ export class MovementsService {
       where: {
         id,
       },
+      relations: ['tag'],
     });
   }
-
-  // async GetBySenderJar(id: number): Promise<Movements[]> {
-  //   return await this.MovementsRepo.find({
-  //     where: {
-  //       senderJar: {
-  //         id,
-  //       },
-  //     },
-  //     relations: ['senderJar'],
-  //   });
-  // }
-
-  // async GetByReceiverJar(id: number): Promise<Movements[]> {
-  //   return await this.MovementsRepo.find({
-  //     where: {
-  //       receiverJar: {
-  //         id,
-  //       },
-  //     },
-  //     relations: ['receiverJar'],
-  //   });
-  // }
 
   async GetAll(): Promise<Movements[]> {
     return await this.MovementsRepo.find();

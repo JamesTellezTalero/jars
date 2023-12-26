@@ -6,6 +6,7 @@ import { Movements } from 'src/database/entities/Movements';
 import { JarsModule } from 'src/jars/jars.module';
 import { MovementTypesModule } from 'src/movement-types/movement-types.module';
 import { UsersModule } from 'src/users/users.module';
+import { TagsModule } from 'src/tags/tags.module';
 // import { MongooseModule } from '@nestjs/mongoose';
 // import { Movements, MovementsSchema } from './movements.entities';
 
@@ -14,6 +15,7 @@ import { UsersModule } from 'src/users/users.module';
     TypeOrmModule.forFeature([Movements]),
     JarsModule,
     MovementTypesModule,
+    TagsModule,
     UsersModule,
   ],
   providers: [MovementsService],
