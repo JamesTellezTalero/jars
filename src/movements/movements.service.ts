@@ -116,15 +116,7 @@ export class MovementsService {
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
-    let receiverJarExist = user.jars.find((e) => e.id == receiverJar.id);
-    if (receiverJarExist == null) {
-      respM.Data = null;
-      respM.Message =
-        this.ControllerContext +
-        'receiverJar does not belong to the user sent.';
-      respM.StatusCode = HttpStatus.NOT_FOUND;
-      throw new HttpException(respM, HttpStatus.NOT_FOUND);
-    }
+    await this.JarsS.ValidateUserPertenency(receiverJar.id, user.email);
     let movement = new Movements();
     movement.title = movementsDto.title;
     movement.desc = movementsDto?.desc || '';
@@ -158,14 +150,7 @@ export class MovementsService {
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
-    let senderJarExist = user.jars.find((e) => e.id == senderJar.id);
-    if (senderJarExist == null) {
-      respM.Data = null;
-      respM.Message =
-        this.ControllerContext + 'senderJar does not belong to the user sent.';
-      respM.StatusCode = HttpStatus.NOT_FOUND;
-      throw new HttpException(respM, HttpStatus.NOT_FOUND);
-    }
+    await this.JarsS.ValidateUserPertenency(senderJar.id, user.email);
     let movement = new Movements();
     movement.title = movementsDto.title;
     movement.desc = movementsDto?.desc || '';
@@ -199,14 +184,6 @@ export class MovementsService {
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
-    let senderJarExist = user.jars.find((e) => e.id == senderJar.id);
-    if (senderJarExist == null) {
-      respM.Data = null;
-      respM.Message =
-        this.ControllerContext + 'senderJar does not belong to the user sent.';
-      respM.StatusCode = HttpStatus.NOT_FOUND;
-      throw new HttpException(respM, HttpStatus.NOT_FOUND);
-    }
     let receiverJar = await this.JarsS.GetById(movementsDto?.receiverJar);
     if (receiverJar == null) {
       respM.Data = null;
@@ -214,15 +191,12 @@ export class MovementsService {
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
-    let receiverJarExist = user.jars.find((e) => e.id == receiverJar.id);
-    if (receiverJarExist == null) {
-      respM.Data = null;
-      respM.Message =
-        this.ControllerContext +
-        'receiverJar does not belong to the user sent.';
-      respM.StatusCode = HttpStatus.NOT_FOUND;
-      throw new HttpException(respM, HttpStatus.NOT_FOUND);
-    }
+    await this.JarsS.ValidateUserPertenencyForTwoJars(
+      senderJar.id,
+      receiverJar.id,
+      user.email,
+    );
+
     let movement = new Movements();
     movement.title = movementsDto.title;
     movement.desc = movementsDto?.desc || '';

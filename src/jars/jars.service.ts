@@ -117,6 +117,45 @@ export class JarsService {
     return this.JarsRepo.findOne({ where: { id } });
   }
 
+  async ValidateUserPertenency(id: number, email: string): Promise<boolean> {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    let jar = await this.GetById(id);
+    let user = await this.UsersS.GetByEmailWithJars(email);
+    let exist = user.jars.find((e) => e.id == jar?.id);
+    if (exist != null) {
+      return true;
+    } else {
+      respM.Data = null;
+      respM.Message =
+        this.ControllerContext +
+        'Submitted jar does not belong to sended user.';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
+  }
+
+  async ValidateUserPertenencyForTwoJars(
+    id1: number,
+    id2: number,
+    email: string,
+  ): Promise<boolean> {
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    let jar1 = await this.GetById(id1);
+    let jar2 = await this.GetById(id2);
+    let user = await this.UsersS.GetByEmailWithJars(email);
+    let exist = user.jars.filter((e) => e.id == jar1?.id || e.id == jar2?.id);
+    if (exist.length >= 2) {
+      return true;
+    } else {
+      respM.Data = null;
+      respM.Message =
+        this.ControllerContext +
+        'One or More jars does not belong to sended user.';
+      respM.StatusCode = HttpStatus.NOT_FOUND;
+      throw new HttpException(respM, HttpStatus.NOT_FOUND);
+    }
+  }
+
   async GetUserById(id: number): Promise<Jars[]> {
     return this.JarsRepo.find({
       where: {
