@@ -296,6 +296,11 @@ export class MovementsService {
         id,
       },
       relations: ['tag'],
+      order: {
+        tag: {
+          id: 'ASC',
+        },
+      },
     });
   }
 
