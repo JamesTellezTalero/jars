@@ -14,6 +14,7 @@ import * as Joi from 'joi';
 import dbConfig from './database/dbConfig';
 import { MulterModule } from '@nestjs/platform-express';
 import { CuteOffDateCronModule } from './cute-off-date-cron/cute-off-date-cron.module';
+import { JarsMovementsModule } from './jars-movements/jars-movements.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { CuteOffDateCronModule } from './cute-off-date-cron/cute-off-date-cron.m
     GeneralModuleModule,
     AuthModule,
     CuteOffDateCronModule,
+    JarsMovementsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
