@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Jars } from 'src/database/entities/Jars';
 import { UsersService } from 'src/users/users.service';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { JarsDto, UpdateJarsDto } from './jars.dto';
 import { GeneralModuleService } from 'src/general-module/general-module.service';
 // import { InjectModel } from '@nestjs/mongoose';
@@ -96,6 +96,18 @@ export class JarsService {
     return this.JarsRepo.findOne({
       where: { id },
       relations: ['incomeMovements', 'outcomeMovements'],
+    });
+  }
+
+  async GetJarMovementsByIds(ids: number[]): Promise<Jars[]> {
+    return this.JarsRepo.find({
+      where: { id: In(ids) },
+      relations: [
+        'incomeMovements',
+        'incomeMovements.movementType',
+        'outcomeMovements',
+        'outcomeMovements.movementType',
+      ],
     });
   }
 

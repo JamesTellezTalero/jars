@@ -14,3 +14,15 @@ export class jarsStadisticsDto {
   @IsOptional()
   jsonWebTokenInfo: ApiJwtModel;
 }
+
+export class jarsStadisticsResponseDto {
+  @IsNumber()
+  @IsPositive()
+  totalIncomes: number;
+  @IsNumber()
+  @IsPositive()
+  totalOutcomes: number;
+  @IsNumber()
+  @IsPositive()
+  balance: number;
+}
