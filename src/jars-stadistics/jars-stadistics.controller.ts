@@ -7,7 +7,7 @@ export class JarsStadisticsController {
   constructor(private readonly JarsStadisticsS: JarsStadisticsService) {}
 
   @Get('/')
-  async test(@Body() dto: jarsStadisticsDto) {
-    return await this.JarsStadisticsS.test(dto);
+  async GetGeneralStadistics(@Body() dto: jarsStadisticsDto) {
+    return await this.JarsStadisticsS.GetGeneralStadistics(dto);
   }
 }
