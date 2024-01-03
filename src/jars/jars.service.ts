@@ -92,16 +92,21 @@ export class JarsService {
     }
   }
 
-  async GetJarMovementsById(id: number): Promise<Jars> {
-    return this.JarsRepo.findOne({
-      where: { id },
-      relations: ['incomeMovements', 'outcomeMovements'],
-    });
-  }
-
   async GetJarMovementsByIds(ids: number[]): Promise<Jars[]> {
     return this.JarsRepo.find({
       where: { id: In(ids) },
+      relations: [
+        'incomeMovements',
+        'incomeMovements.movementType',
+        'outcomeMovements',
+        'outcomeMovements.movementType',
+      ],
+    });
+  }
+
+  async GetJarMovementsById(id: number): Promise<Jars> {
+    return this.JarsRepo.findOne({
+      where: { id },
       relations: [
         'incomeMovements',
         'incomeMovements.movementType',
