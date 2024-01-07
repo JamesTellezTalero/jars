@@ -38,6 +38,7 @@ import {
 import { UsersUpdatePipe } from 'src/common/users/users-update.pipe';
 import { UsersUpdatePasswordPipe } from 'src/common/users/users-update-password.pipe';
 import { UsersUpdateCuteOffDatePipe } from 'src/common/users/users-update-cute-off-date.pipe';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('users')
 export class UsersController {
@@ -50,6 +51,16 @@ export class UsersController {
 
   @Public()
   @HttpCode(HttpStatus.CREATED)
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'Users: Registro Success!',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: 'Users: The email sent is already registered',
+    type: ApiResponseModel,
+  })
   @Post('/')
   async Register(@Body(UsersPipe) body: UsersDto) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
@@ -60,16 +71,36 @@ export class UsersController {
   }
 
   @HttpCode(HttpStatus.ACCEPTED)
+  @ApiResponse({
+    status: HttpStatus.ACCEPTED,
+    description: 'Users: Login Success!',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Users: Submitted user does not register',
+    type: ApiResponseModel,
+  })
   @Post('/login')
   async Login(@Body(UserLoginPipe) body: LoginUsersDto) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     respM.Data = await this.UsersS.Login(body);
-    respM.StatusCode = HttpStatus.OK;
+    respM.StatusCode = HttpStatus.ACCEPTED;
     respM.Message = this.ControllerContext + 'Login Success!';
     return respM;
   }
 
   @HttpCode(HttpStatus.ACCEPTED)
+  @ApiResponse({
+    status: HttpStatus.ACCEPTED,
+    description: 'Users: Update Success!',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Users: Submitted user does not register',
+    type: ApiResponseModel,
+  })
   @Put('/')
   async Update(@Body(UsersUpdatePipe) body: UsersUpdateDto) {
     const ApiResponseM = new ApiResponseModel();
@@ -80,6 +111,16 @@ export class UsersController {
   }
 
   @HttpCode(HttpStatus.ACCEPTED)
+  @ApiResponse({
+    status: HttpStatus.ACCEPTED,
+    description: 'Users: Update Success!',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Users: Submitted user does not register',
+    type: ApiResponseModel,
+  })
   @Put('/UpdatePassword/')
   async UpdatePassword(
     @Body(UsersUpdatePasswordPipe) body: UsersUpdatePasswordDto,
@@ -92,6 +133,16 @@ export class UsersController {
   }
 
   @HttpCode(HttpStatus.ACCEPTED)
+  @ApiResponse({
+    status: HttpStatus.ACCEPTED,
+    description: 'Users: UpdateCuteOffDate Success!',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Users: Submitted user does not register',
+    type: ApiResponseModel,
+  })
   @Put('/UpdateCuteOffDate/')
   async UpdateCuteOffDate(
     @Body(UsersUpdateCuteOffDatePipe) body: UsersUpdateCuteOffDateDto,
@@ -105,6 +156,16 @@ export class UsersController {
   }
 
   @HttpCode(HttpStatus.ACCEPTED)
+  @ApiResponse({
+    status: HttpStatus.ACCEPTED,
+    description: 'Users: UpdateImg Success!',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Users: Submitted user does not register',
+    type: ApiResponseModel,
+  })
   @Put('/:email')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -127,6 +188,21 @@ export class UsersController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Users: GetById Success!',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Users: The id property is not valid',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Users: Submitted user does not register',
+    type: ApiResponseModel,
+  })
   @Get('/:id')
   async GetById(@Param('id') id: number) {
     const ApiResponseM = new ApiResponseModel();
@@ -145,6 +221,16 @@ export class UsersController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Users: GetByEmail Success!',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description: 'Users: Submitted user does not register',
+    type: ApiResponseModel,
+  })
   @Get('/GetByEmail/:email')
   async GetByEmail(@Param('email') email: string) {
     const ApiResponseM: ApiResponseModel = {
