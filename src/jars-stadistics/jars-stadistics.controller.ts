@@ -15,6 +15,7 @@ import {
 } from './jars-stadistics.dto';
 import { GeneralModuleService } from 'src/general-module/general-module.service';
 import { ApiResponse } from '@nestjs/swagger';
+import { ApiResponseModel } from 'src/general-models/api-response.model';
 
 @Controller('jars-stadistics')
 export class JarsStadisticsController {
@@ -26,6 +27,22 @@ export class JarsStadisticsController {
   private readonly ControllerContext = 'Jars Stadistics: ';
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Jars Stadistics: GetGeneralStadistics Success',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Jars Stadistics: jarId was not received',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description:
+      'Submitted jar does not belong to sended user or user not exist',
+    type: ApiResponseModel,
+  })
   @Get('/')
   async GetGeneralStadistics(@Body() dto: jarsStadisticsDto) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
@@ -36,6 +53,22 @@ export class JarsStadisticsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Jars Stadistics: GetGeneralStadisticsByDates Success',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Jars Stadistics: jarId was not received',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description:
+      'Submitted jar does not belong to sended user or user not exist',
+    type: ApiResponseModel,
+  })
   @Get('/dates/')
   async GetGeneralStadisticsByDates(@Body() dto: jarsStadisticsDatesDto) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
@@ -47,6 +80,22 @@ export class JarsStadisticsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Jars Stadistics: GetJarStadistics Success',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Jars Stadistics: jarId was not received',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description:
+      'Submitted jar does not belong to sended user or user not exist',
+    type: ApiResponseModel,
+  })
   @Get('/:jarId')
   async GetJarStadistics(
     @Body() dto: jarsStadisticsDto,
@@ -72,11 +121,18 @@ export class JarsStadisticsController {
   @ApiResponse({
     status: HttpStatus.OK,
     description: 'Jars Stadistics: GetJarStadisticsByDates Success',
-    type: jarsStadisticsResponseDto,
+    type: ApiResponseModel,
   })
   @ApiResponse({
     status: HttpStatus.FORBIDDEN,
     description: 'Jars Stadistics: jarId was not received',
+    type: ApiResponseModel,
+  })
+  @ApiResponse({
+    status: HttpStatus.NOT_FOUND,
+    description:
+      'Submitted jar does not belong to sended user or user not exist',
+    type: ApiResponseModel,
   })
   @Get('/dates/:jarId')
   async GetJarStadisticsByDates(
