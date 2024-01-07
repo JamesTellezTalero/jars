@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   HttpException,
   HttpStatus,
   Param,
@@ -20,16 +21,30 @@ export class JarsStadisticsController {
     private readonly GeneralModuleS: GeneralModuleService,
   ) {}
 
+  private readonly ControllerContext = 'Jars Stadistics: ';
+
+  @HttpCode(HttpStatus.OK)
   @Get('/')
   async GetGeneralStadistics(@Body() dto: jarsStadisticsDto) {
-    return await this.JarsStadisticsS.GetGeneralStadistics(dto);
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    respM.Data = await this.JarsStadisticsS.GetGeneralStadistics(dto);
+    respM.Message = this.ControllerContext + 'GetGeneralStadistics Success';
+    respM.StatusCode = HttpStatus.OK;
+    return respM;
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get('/dates/')
   async GetGeneralStadisticsByDates(@Body() dto: jarsStadisticsDatesDto) {
-    return await this.JarsStadisticsS.GetGeneralStadisticsByDates(dto);
+    const respM = await this.GeneralModuleS.GetApiResponseModel();
+    respM.Data = await this.JarsStadisticsS.GetGeneralStadisticsByDates(dto);
+    respM.Message =
+      this.ControllerContext + 'GetGeneralStadisticsByDates Success';
+    respM.StatusCode = HttpStatus.OK;
+    return respM;
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get('/:jarId')
   async GetJarStadistics(
     @Body() dto: jarsStadisticsDto,
@@ -42,9 +57,16 @@ export class JarsStadisticsController {
       respM.StatusCode = HttpStatus.FORBIDDEN;
       throw new HttpException(respM, HttpStatus.FORBIDDEN);
     }
-    return await this.JarsStadisticsS.GetJarStadistics(dto, Number(jarId));
+    respM.Data = await this.JarsStadisticsS.GetJarStadistics(
+      dto,
+      Number(jarId),
+    );
+    respM.Message = this.ControllerContext + 'GetJarStadistics Success';
+    respM.StatusCode = HttpStatus.OK;
+    return respM;
   }
 
+  @HttpCode(HttpStatus.OK)
   @Get('/dates/:jarId')
   async GetJarStadisticsByDates(
     @Body() dto: jarsStadisticsDatesDto,
@@ -57,9 +79,12 @@ export class JarsStadisticsController {
       respM.StatusCode = HttpStatus.FORBIDDEN;
       throw new HttpException(respM, HttpStatus.FORBIDDEN);
     }
-    return await this.JarsStadisticsS.GetJarStadisticsByDates(
+    respM.Data = await this.JarsStadisticsS.GetJarStadisticsByDates(
       dto,
       Number(jarId),
     );
+    respM.Message = this.ControllerContext + 'GetJarStadisticsByDates Success';
+    respM.StatusCode = HttpStatus.OK;
+    return respM;
   }
 }
