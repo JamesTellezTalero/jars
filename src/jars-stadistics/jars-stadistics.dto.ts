@@ -1,5 +1,7 @@
 import {
   IsBoolean,
+  IsDate,
+  IsDateString,
   IsEmail,
   IsNumber,
   IsOptional,
@@ -9,6 +11,15 @@ import {
 } from 'class-validator';
 import { ApiJwtModel } from 'src/general-models/api-jwt.model';
 import { UsersDto } from 'src/users/users.dto';
+
+export class jarsStadisticsDatesDto {
+  @IsDateString({ strict: true })
+  inicio: Date;
+  @IsDateString({ strict: true })
+  final: Date;
+  @IsOptional()
+  jsonWebTokenInfo: ApiJwtModel;
+}
 
 export class jarsStadisticsDto {
   @IsOptional()

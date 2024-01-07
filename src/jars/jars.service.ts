@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Jars } from 'src/database/entities/Jars';
 import { UsersService } from 'src/users/users.service';
-import { In, Repository } from 'typeorm';
+import { Between, In, Repository } from 'typeorm';
 import { JarsDto, UpdateJarsDto } from './jars.dto';
 import { GeneralModuleService } from 'src/general-module/general-module.service';
 // import { InjectModel } from '@nestjs/mongoose';
@@ -93,7 +93,7 @@ export class JarsService {
   }
 
   async GetJarMovementsByIds(ids: number[]): Promise<Jars[]> {
-    return this.JarsRepo.find({
+    return await this.JarsRepo.find({
       where: { id: In(ids) },
       relations: [
         'incomeMovements',
@@ -104,8 +104,58 @@ export class JarsService {
     });
   }
 
+  async GetJarsMovementsByIdsAndDates(
+    ids: number[],
+    inicio: Date,
+    final: Date,
+  ) {
+    let jarsIncomes = await this.GetJarsIncomeMovementsByIdsAndDates(
+      ids,
+      inicio,
+      final,
+    );
+    let jarsOutcomes = await this.GetJarsOutcomeMovementsByIdsAndDates(
+      ids,
+      inicio,
+      final,
+    );
+    return { jarsIncomes, jarsOutcomes };
+  }
+
+  async GetJarsIncomeMovementsByIdsAndDates(
+    ids: number[],
+    inicio: Date,
+    final: Date,
+  ): Promise<Jars[]> {
+    return await this.JarsRepo.find({
+      where: {
+        id: In(ids),
+        incomeMovements: {
+          createdAt: Between(inicio, final),
+        },
+      },
+      relations: ['incomeMovements', 'incomeMovements.movementType'],
+    });
+  }
+
+  async GetJarsOutcomeMovementsByIdsAndDates(
+    ids: number[],
+    inicio: Date,
+    final: Date,
+  ): Promise<Jars[]> {
+    return await this.JarsRepo.find({
+      where: {
+        id: In(ids),
+        outcomeMovements: {
+          createdAt: Between(inicio, final),
+        },
+      },
+      relations: ['outcomeMovements', 'outcomeMovements.movementType'],
+    });
+  }
+
   async GetJarMovementsById(id: number): Promise<Jars> {
-    return this.JarsRepo.findOne({
+    return await this.JarsRepo.findOne({
       where: { id },
       relations: [
         'incomeMovements',
@@ -116,22 +166,67 @@ export class JarsService {
     });
   }
 
+  async GetJarMovementsByIdAndDates(id: number, inicio: Date, final: Date) {
+    let jarsIncomes = await this.GetJarIncomeMovementsByIdAndDates(
+      id,
+      inicio,
+      final,
+    );
+    let jarsOutcomes = await this.GetJarOutcomeMovementsByIdAndDates(
+      id,
+      inicio,
+      final,
+    );
+    return { jarsIncomes, jarsOutcomes };
+  }
+
+  async GetJarIncomeMovementsByIdAndDates(
+    id: number,
+    inicio: Date,
+    final: Date,
+  ): Promise<Jars> {
+    return await this.JarsRepo.findOne({
+      where: {
+        id,
+        incomeMovements: {
+          createdAt: Between(inicio, final),
+        },
+      },
+      relations: ['incomeMovements', 'incomeMovements.movementType'],
+    });
+  }
+  async GetJarOutcomeMovementsByIdAndDates(
+    id: number,
+    inicio: Date,
+    final: Date,
+  ): Promise<Jars> {
+    return await this.JarsRepo.findOne({
+      where: {
+        id,
+        outcomeMovements: {
+          createdAt: Between(inicio, final),
+        },
+      },
+      relations: ['outcomeMovements', 'outcomeMovements.movementType'],
+    });
+  }
+
   async GetReceiberMovementsByJarId(id: number): Promise<Jars> {
-    return this.JarsRepo.findOne({
+    return await this.JarsRepo.findOne({
       where: { id },
       relations: ['incomeMovements'],
     });
   }
 
   async GetSenderMovementsByJarId(id: number): Promise<Jars> {
-    return this.JarsRepo.findOne({
+    return await this.JarsRepo.findOne({
       where: { id },
       relations: ['outcomeMovements'],
     });
   }
 
   async GetById(id: number): Promise<Jars> {
-    return this.JarsRepo.findOne({ where: { id } });
+    return await this.JarsRepo.findOne({ where: { id } });
   }
 
   async ValidateUserPertenency(id: number, email: string): Promise<boolean> {
@@ -174,7 +269,7 @@ export class JarsService {
   }
 
   async GetUserById(id: number): Promise<Jars[]> {
-    return this.JarsRepo.find({
+    return await this.JarsRepo.find({
       where: {
         user: {
           id,
@@ -194,7 +289,7 @@ export class JarsService {
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     } else {
-      return this.JarsRepo.remove(await this.GetById(id));
+      return await this.JarsRepo.remove(await this.GetById(id));
     }
   }
 
