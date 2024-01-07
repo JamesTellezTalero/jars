@@ -40,7 +40,7 @@ export class JarsStadisticsController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description:
-      'Submitted jar does not belong to sended user or user not exist',
+      'Jars: Submitted jar does not belong to sended user or user not exist',
     type: ApiResponseModel,
   })
   @Get('/')
@@ -66,7 +66,7 @@ export class JarsStadisticsController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description:
-      'Submitted jar does not belong to sended user or user not exist',
+      'Jars: Submitted jar does not belong to sended user or user not exist',
     type: ApiResponseModel,
   })
   @Get('/dates/')
@@ -93,7 +93,7 @@ export class JarsStadisticsController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description:
-      'Submitted jar does not belong to sended user or user not exist',
+      'Jars: Submitted jar does not belong to sended user or user not exist',
     type: ApiResponseModel,
   })
   @Get('/:jarId')
@@ -131,7 +131,7 @@ export class JarsStadisticsController {
   @ApiResponse({
     status: HttpStatus.NOT_FOUND,
     description:
-      'Submitted jar does not belong to sended user or user not exist',
+      'Jars: Submitted jar does not belong to sended user or user not exist',
     type: ApiResponseModel,
   })
   @Get('/dates/:jarId')
