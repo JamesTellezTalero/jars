@@ -1,20 +1,21 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import * as Joi from 'joi';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UsersModule } from './users/users.module';
+import { MulterModule } from '@nestjs/platform-express';
+
+import { AuthModule } from './auth/auth.module';
+import { CuteOffDateCronModule } from './cute-off-date-cron/cute-off-date-cron.module';
+import dbConfig from './database/dbConfig';
+import { DatabaseModule } from './database/database.module';
+import { GeneralModuleModule } from './general-module/general-module.module';
 import { JarsModule } from './jars/jars.module';
+import { JarsStadisticsModule } from './jars-stadistics/jars-stadistics.module';
 import { MovementsModule } from './movements/movements.module';
 import { MovementTypesModule } from './movement-types/movement-types.module';
-import { DatabaseModule } from './database/database.module';
-import { ConfigModule } from '@nestjs/config';
 import { TagsModule } from './tags/tags.module';
-import { GeneralModuleModule } from './general-module/general-module.module';
-import { AuthModule } from './auth/auth.module';
-import * as Joi from 'joi';
-import dbConfig from './database/dbConfig';
-import { MulterModule } from '@nestjs/platform-express';
-import { CuteOffDateCronModule } from './cute-off-date-cron/cute-off-date-cron.module';
-import { JarsStadisticsModule } from './jars-stadistics/jars-stadistics.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -35,16 +36,16 @@ import { JarsStadisticsModule } from './jars-stadistics/jars-stadistics.module';
     MulterModule.register({
       dest: './src/assets/UserImgs',
     }),
-    UsersModule,
-    JarsModule,
-    MovementsModule,
-    MovementTypesModule,
-    DatabaseModule,
-    TagsModule,
-    GeneralModuleModule,
     AuthModule,
     CuteOffDateCronModule,
+    DatabaseModule,
+    GeneralModuleModule,
+    JarsModule,
     JarsStadisticsModule,
+    MovementsModule,
+    MovementTypesModule,
+    TagsModule,
+    UsersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
