@@ -7,6 +7,7 @@ import {
   SwaggerModule,
 } from '@nestjs/swagger';
 import { ApiResponseModel } from './general-models/api-response.model';
+import { jarsStadisticsDatesDto } from './jars-stadistics/jars-stadistics.dto';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -18,7 +19,7 @@ async function bootstrap() {
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   const options: SwaggerDocumentOptions = {
-    extraModels: [ApiResponseModel],
+    extraModels: [ApiResponseModel, jarsStadisticsDatesDto],
   };
 
   const config = new DocumentBuilder()

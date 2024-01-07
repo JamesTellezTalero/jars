@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsBoolean,
   IsDate,
@@ -14,8 +15,10 @@ import { UsersDto } from 'src/users/users.dto';
 
 export class jarsStadisticsDatesDto {
   @IsDateString({ strict: true })
+  @ApiProperty()
   inicio: Date;
   @IsDateString({ strict: true })
+  @ApiProperty()
   final: Date;
   @IsOptional()
   jsonWebTokenInfo: ApiJwtModel;
@@ -29,11 +32,14 @@ export class jarsStadisticsDto {
 export class jarsStadisticsResponseDto {
   @IsNumber()
   @IsPositive()
+  @ApiProperty()
   totalIncomes: number;
   @IsNumber()
   @IsPositive()
+  @ApiProperty()
   totalOutcomes: number;
   @IsNumber()
   @IsPositive()
+  @ApiProperty()
   balance: number;
 }

@@ -11,8 +11,10 @@ import { JarsStadisticsService } from './jars-stadistics.service';
 import {
   jarsStadisticsDatesDto,
   jarsStadisticsDto,
+  jarsStadisticsResponseDto,
 } from './jars-stadistics.dto';
 import { GeneralModuleService } from 'src/general-module/general-module.service';
+import { ApiResponse } from '@nestjs/swagger';
 
 @Controller('jars-stadistics')
 export class JarsStadisticsController {
@@ -67,6 +69,15 @@ export class JarsStadisticsController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @ApiResponse({
+    status: HttpStatus.OK,
+    description: 'Jars Stadistics: GetJarStadisticsByDates Success',
+    type: jarsStadisticsResponseDto,
+  })
+  @ApiResponse({
+    status: HttpStatus.FORBIDDEN,
+    description: 'Jars Stadistics: jarId was not received',
+  })
   @Get('/dates/:jarId')
   async GetJarStadisticsByDates(
     @Body() dto: jarsStadisticsDatesDto,

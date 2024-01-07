@@ -26,5 +26,6 @@ export class ApiJwtModel {
   })
   @IsNotEmpty()
   @IsNumber()
+  @ApiProperty()
   email: string;
 }
