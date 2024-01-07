@@ -105,14 +105,4 @@ export class TagsService {
       return await this.TagsRepo.remove(newTag);
     }
   }
-  // async testCreateRecord() {
-  //   const tag = new Tags();
-
-  //   tag.name = 'string';
-  //   tag.user = await this.UsersS.GetUserById(2);
-  //   tag.createdAt = new Date();
-  //   tag.updatedAt = new Date();
-
-  //   return await this.TagsRepo.save(tag);
-  // }
 }

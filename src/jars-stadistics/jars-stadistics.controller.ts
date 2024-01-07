@@ -29,7 +29,7 @@ export class JarsStadisticsController {
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Jars Stadistics: GetGeneralStadistics Success',
+    description: 'Jars Stadistics: GetGeneralStadistics Success!',
     type: ApiResponseModel,
   })
   @ApiResponse({
@@ -47,7 +47,7 @@ export class JarsStadisticsController {
   async GetGeneralStadistics(@Body() dto: jarsStadisticsDto) {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     respM.Data = await this.JarsStadisticsS.GetGeneralStadistics(dto);
-    respM.Message = this.ControllerContext + 'GetGeneralStadistics Success';
+    respM.Message = this.ControllerContext + 'GetGeneralStadistics Success!';
     respM.StatusCode = HttpStatus.OK;
     return respM;
   }
@@ -55,7 +55,7 @@ export class JarsStadisticsController {
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Jars Stadistics: GetGeneralStadisticsByDates Success',
+    description: 'Jars Stadistics: GetGeneralStadisticsByDates Success!',
     type: ApiResponseModel,
   })
   @ApiResponse({
@@ -74,7 +74,7 @@ export class JarsStadisticsController {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
     respM.Data = await this.JarsStadisticsS.GetGeneralStadisticsByDates(dto);
     respM.Message =
-      this.ControllerContext + 'GetGeneralStadisticsByDates Success';
+      this.ControllerContext + 'GetGeneralStadisticsByDates Success!';
     respM.StatusCode = HttpStatus.OK;
     return respM;
   }
@@ -82,7 +82,7 @@ export class JarsStadisticsController {
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Jars Stadistics: GetJarStadistics Success',
+    description: 'Jars Stadistics: GetJarStadistics Success!',
     type: ApiResponseModel,
   })
   @ApiResponse({
@@ -112,7 +112,7 @@ export class JarsStadisticsController {
       dto,
       Number(jarId),
     );
-    respM.Message = this.ControllerContext + 'GetJarStadistics Success';
+    respM.Message = this.ControllerContext + 'GetJarStadistics Success!';
     respM.StatusCode = HttpStatus.OK;
     return respM;
   }
@@ -120,7 +120,7 @@ export class JarsStadisticsController {
   @HttpCode(HttpStatus.OK)
   @ApiResponse({
     status: HttpStatus.OK,
-    description: 'Jars Stadistics: GetJarStadisticsByDates Success',
+    description: 'Jars Stadistics: GetJarStadisticsByDates Success!',
     type: ApiResponseModel,
   })
   @ApiResponse({
@@ -150,7 +150,7 @@ export class JarsStadisticsController {
       dto,
       Number(jarId),
     );
-    respM.Message = this.ControllerContext + 'GetJarStadisticsByDates Success';
+    respM.Message = this.ControllerContext + 'GetJarStadisticsByDates Success!';
     respM.StatusCode = HttpStatus.OK;
     return respM;
   }
