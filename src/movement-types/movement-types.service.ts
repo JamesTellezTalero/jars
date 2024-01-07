@@ -31,7 +31,7 @@ export class MovementTypesService {
       respM.Data = null;
       respM.Message =
         this.ControllerContext +
-        'El Movement Type enviado no se registra o es invalido.';
+        'The movementType sent is not registered or is invalid.';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     } else {
