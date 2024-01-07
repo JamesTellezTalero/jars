@@ -38,13 +38,13 @@ export class JarsService {
         e.userId = user.id;
         await this.Create(e);
         if (i == this.InitJarsData.length - 1) {
-          return await this.GetUserById(user.id);
+          return await this.GetByUserId(user.id);
         }
       }
     } else {
       respM.Data = null;
       respM.Message =
-        this.ControllerContext + 'The user already registers Jars';
+        this.ControllerContext + 'The user already registers Jars.';
       respM.StatusCode = HttpStatus.NOT_FOUND;
       throw new HttpException(respM, HttpStatus.NOT_FOUND);
     }
@@ -268,7 +268,7 @@ export class JarsService {
     }
   }
 
-  async GetUserById(id: number): Promise<Jars[]> {
+  async GetByUserId(id: number): Promise<Jars[]> {
     return await this.JarsRepo.find({
       where: {
         user: {
@@ -298,7 +298,7 @@ export class JarsService {
     incomePercent: number,
   ): Promise<boolean> {
     const respM = await this.GeneralModuleS.GetApiResponseModel();
-    const Jars = await this.GetUserById(Number(userId));
+    const Jars = await this.GetByUserId(Number(userId));
     if (Jars.length == 0) {
       return true;
     } else {
